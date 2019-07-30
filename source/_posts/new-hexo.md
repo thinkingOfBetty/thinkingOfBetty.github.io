@@ -15,3 +15,5 @@ title: hexo 采坑记
 （6）上传时要特别注意：master分支上只需要上传public中的内容，之后每次更新文件的时候只需要上传修改的对应静态文件。hexo分支上传的是环境文件。两个分支上都可以配置对应的.gitIgnore文件 
 （7）下次再新的pc上进行开发时，可以先拉去master的内容，然后通过git checkout 本地分支名 origin/远程分支名
 （8）在hexo分支上写文章，然后git add .;git commit -m xx;git push xx; hexo g -d ；之后复制对应的变更给到master中进行上传，此时即可看到界面发生改变。
+
+（9）特别注意的是如果直接从hexo上拉代码之后npm install是不能直接跑项目的，需要在安装对应的theme主题包，因为对应的主题包push不上去，安装见步骤4，安装之后再hexo s即可在本地启动
