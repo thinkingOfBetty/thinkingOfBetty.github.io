@@ -7,10 +7,11 @@ title: 季度下拉框代码优化
 在做这种通用性比较强的内容，一定要一开始就往可配置的方向去思考，否则可能就是做很多无用功，走很多的弯路。
 
 优化之后的代码
-        getCurrentQuarter () {  //计算当前在哪个季度 
-            const MONTH = new Date().getMonth() + 1,  //用getMonth获取的月份比实际月份少一个月
-                      CURRENTQUARTER = QUARTERS_OBJ[MONTH];
-                       
+``` bash
+            getCurrentQuarter () {                                  //计算当前在哪个季度 
+                const MONTH = new Date().getMonth() + 1,            //用getMonth获取的月份比实际月份少一个月
+                        CURRENTQUARTER = QUARTERS_OBJ[MONTH];
+                        
                 return CURRENTQUARTER;
             
             },
@@ -41,4 +42,5 @@ title: 季度下拉框代码优化
                 }
 
                 return arr;
-            };
+            }
+```
