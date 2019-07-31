@@ -45,7 +45,7 @@
     
       <div class="article-meta">
         <a href="/2019/07/31/quarter-select-code-opt/" class="article-date">
-  <time datetime="2019-07-31T01:10:34.825Z" itemprop="datePublished">2019-07-31</time>
+  <time datetime="2019-07-31T01:17:46.510Z" itemprop="datePublished">2019-07-31</time>
 </a>
         
       </div>
@@ -59,38 +59,8 @@
       
         <p>结论：对比以上两种，最大的不同其实是思考逻辑。在思考这个内容的起初，我就给自己限定了思考的范围，就是我是从固定数量的季度数开始思考，然后就发现季度是要减去固定的数量才得出的，以致于写出冗长的代码。慢吃是一开始就认定这种是可以做成配置项的，所以思考的入口就很不一样，后面产出的东西就不一样。</p>
 <p>在做这种通用性比较强的内容，一定要一开始就往可配置的方向去思考，否则可能就是做很多无用功，走很多的弯路。</p>
-<p>优化之后的代码<br>        getCurrentQuarter () {  //计算当前在哪个季度<br>            const MONTH = new Date().getMonth() + 1,  //用getMonth获取的月份比实际月份少一个月<br>                      CURRENTQUARTER = QUARTERS_OBJ[MONTH];</p>
-<pre><code>    return CURRENTQUARTER;
-
-},
-
- /**
- * 将某个年份的指定季度推进指定数组里，如果order是true，则是取的指定年份的靠前的年份，反之是取的是靠后的年份
- * @param {String} current //年份跟季度的组合 形如2019-02 
- * @param {Number} beforeNum  //需要显示的季度数，不包括当前季度
- * @return {Array} 
- */
-getBeforeCurrentQuarter (current, beforeNum) {
-    let season = [&apos;1&apos;, &apos;2&apos;, &apos;3&apos;, &apos;4&apos;],
-        len = season.length,
-        [year, quarter] = current.split(&apos;-&apos;),
-        index = season.findIndex((item) =&gt; item === quarter),
-        arr = [],
-        loopIndex = index - 1;
-
-    for (let i = 0; i &lt; beforeNum; i++) {
-
-        if (loopIndex &lt; 0) {
-            year--;
-            loopIndex = len - 1;
-        }
-
-        arr.push(this.handleYearAndQuarter(year, season[loopIndex]));
-        loopIndex--;
-    }
-
-    return arr;
-};</code></pre>
+<p>优化之后的代码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">getCurrentQuarter</span></span> () &#123;                                  //计算当前在哪个季度 </span><br><span class="line">    const MONTH = new Date().getMonth() + 1,            //用getMonth获取的月份比实际月份少一个月</span><br><span class="line">            CURRENTQUARTER = QUARTERS_OBJ[MONTH];</span><br><span class="line">            </span><br><span class="line">    <span class="built_in">return</span> CURRENTQUARTER;</span><br><span class="line"></span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line"> /**</span><br><span class="line"> * 将某个年份的指定季度推进指定数组里，如果order是<span class="literal">true</span>，则是取的指定年份的靠前的年份，反之是取的是靠后的年份</span><br><span class="line"> * @param &#123;String&#125; current //年份跟季度的组合 形如2019-02 </span><br><span class="line"> * @param &#123;Number&#125; beforeNum  //需要显示的季度数，不包括当前季度</span><br><span class="line"> * @<span class="built_in">return</span> &#123;Array&#125; </span><br><span class="line"> */</span><br><span class="line">getBeforeCurrentQuarter (current, beforeNum) &#123;</span><br><span class="line">    <span class="built_in">let</span> season = [<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'4'</span>],</span><br><span class="line">        len = season.length,</span><br><span class="line">        [year, quarter] = current.split(<span class="string">'-'</span>),</span><br><span class="line">        index = season.findIndex((item) =&gt; item === quarter),</span><br><span class="line">        arr = [],</span><br><span class="line">        loopIndex = index - 1;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">let</span> i = 0; i &lt; beforeNum; i++) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (loopIndex &lt; 0) &#123;</span><br><span class="line">            year--;</span><br><span class="line">            loopIndex = len - 1;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        arr.push(this.handleYearAndQuarter(year, season[loopIndex]));</span><br><span class="line">        loopIndex--;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> arr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
     <footer class="article-footer">
@@ -106,9 +76,9 @@ getBeforeCurrentQuarter (current, beforeNum) {
   <nav class="article-nav">
     
     
-      <a href="/2019/07/31/one-code-include-two-project/" class="article-nav-link">
+      <a href="/2019/07/31/login-problem/" class="article-nav-link">
         <strong class="article-nav-caption">Olde posts</strong>
-        <div class="article-nav-title">同个项目合入两套代码（LSS&amp;&amp;VMS）</div>
+        <div class="article-nav-title">登录问题排查</div>
       </a>
     
   </nav>
