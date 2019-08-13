@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>
-    Hello World |
+    同个项目合入两套代码（LSS&amp;&amp;VMS） |
     
     Hexo</title>
   
@@ -23,7 +23,7 @@
 <body>
 <main class="content">
   <section class="outer">
-  <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  <article id="post-one-code-include-two-project" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
     
@@ -31,7 +31,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Hello World
+      同个项目合入两套代码（LSS&amp;&amp;VMS）
     </h1>
   
   
@@ -44,8 +44,8 @@
 
     
       <div class="article-meta">
-        <a href="/2019/07/30/hello-world/" class="article-date">
-  <time datetime="2019-07-30T13:26:22.615Z" itemprop="datePublished">2019-07-30</time>
+        <a href="/2019/08/13/one-code-include-two-project/" class="article-date">
+  <time datetime="2019-08-13T02:25:50.745Z" itemprop="datePublished">2019-08-13</time>
 </a>
         
       </div>
@@ -57,24 +57,16 @@
       
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <p>(1)先要明确公共模块，在涉及到公共部分的时候，要先确认下需求，即确认另外的项目是否也需要同样的变动，如果不需要，则需要做兼容处理；<br>(2)然后确认下迭代的顺序跟时间（后面迭代的分支在转测前需要把另一个代码分支合入，在合入代码有冲突时，最好是两个项目的人同时决定留下的内容），如果出现合入代码时不明确迭代发布顺序的情况，那么极有可能发生改动内容丢失的情况。</p>
+<p>举个例子在LSS迭代四跟vms1.0.1的开发过程中，我负责LSS而小卓负责vms，由于我们两个没有对齐迭代的发布时间，导致他误认为LSS迭代四的发布时间比vms1.0.1的发布时间要早，所以他在vms1.0.1转测之前合入了迭代四的内容。</p>
+<p>但是在得知了迭代四原来是比1.0.1晚发布的(此时迭代四的分支还没转测，尚存在一些bug)，他进行了代码的回滚，但是这次代码回滚对后面我迭代四转测前合入vms分支时造成了影响，也就是我迭代四里面有些修改由于合入了vms1.0.1而丢失了，这是因为vms在进行代码回滚的时候进行了某些删除操作，而合并分支时选择了以vms分支的操作为准而导致的。所以如果一旦合错分支时，再次进行合入要小心比对之前回滚的代码。</p>
+<p>由于这次回滚是在git上直接点击还原的，相当于通过新的合并请求来还原（新的合并请求就相当于这次请求的内容都进行了更改），并不是真正意义上的还原，所以下次合入该分支时，会认为这次还原之后的分支的修改时间是比较靠后的，也就是会以此次还原的代码为准，如果这次还原是通过还原主分支，则不会发生这种事情。</p>
+<p>所以：如果代码合入了主分支之后，主分支后面又没有其他的合入时，要进行回滚可以考虑直接回滚主分支,回滚主分支的风险比较大。。特别是后面有新的合入。所以最好是合入其他迭代的分支之前先考虑好。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/30/hello-world/" data-id="cjypuuhmb0001lcfvssssfkao"
+      <a data-url="http://yoursite.com/2019/08/13/one-code-include-two-project/" data-id="cjz9812ql00040cfvyc6kxlds"
          class="article-share-link">Share</a>
       
     </footer>
@@ -85,15 +77,20 @@
     
   <nav class="article-nav">
     
-      <a href="/2019/07/30/new-hexo/" class="article-nav-link">
+      <a href="/2019/08/13/quarter-select-code-opt/" class="article-nav-link">
         <strong class="article-nav-caption">Newer posts</strong>
         <div class="article-nav-title">
           
-            hexo 采坑记
+            季度下拉框代码优化
           
         </div>
       </a>
     
+    
+      <a href="/2019/08/13/new-hexo/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">hexo 采坑记</div>
+      </a>
     
   </nav>
 
@@ -115,8 +112,6 @@
       <ul class="list-inline">
   
     <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
-  
-    <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
   
 </ul>
     </div>
