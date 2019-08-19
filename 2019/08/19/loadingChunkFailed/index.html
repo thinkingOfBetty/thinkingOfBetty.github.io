@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>
-    昨晚拿到人生中第一笔试用期工资，开心 |
+    fix error——error(loading chunk xx failed.) |
     
     Hexo</title>
   
@@ -23,7 +23,7 @@
 <body>
 <main class="content">
   <section class="outer">
-  <article id="post-get-wage" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  <article id="post-loadingChunkFailed" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
     
@@ -31,7 +31,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      昨晚拿到人生中第一笔试用期工资，开心
+      fix error——error(loading chunk xx failed.)
     </h1>
   
   
@@ -44,8 +44,8 @@
 
     
       <div class="article-meta">
-        <a href="/2019/08/02/get-wage/" class="article-date">
-  <time datetime="2019-08-01T16:00:00.000Z" itemprop="datePublished">2019-08-02</time>
+        <a href="/2019/08/19/loadingChunkFailed/" class="article-date">
+  <time datetime="2019-08-18T16:00:00.000Z" itemprop="datePublished">2019-08-19</time>
 </a>
         
       </div>
@@ -57,11 +57,13 @@
       
 
       
-        
+        <p>&emsp;&emsp;今天在项目中添加登陆功能之后，我发现第一次点击切换路由时是正常的，之后再切换时就会报错（loading chunk xx failed）一番搜索之后找到原因出在vue.config.js中的BASE_URL配置，当其在development时配置的是’./‘,去vue-cli官网看了下原来在history路由模式下，BASE_URL是不能采用相对路径的形式进行配置的。</p>
+<p><img src="../img/publicPath.png" alt></p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/02/get-wage/" data-id="cjzhtxt4r0000lkfvtcs9p1t1"
+      <a data-url="http://yoursite.com/2019/08/19/loadingChunkFailed/" data-id="cjzhucw990007lkfvl199w4v3"
          class="article-share-link">Share</a>
       
     </footer>
@@ -72,19 +74,19 @@
     
   <nav class="article-nav">
     
-      <a href="/2019/08/02/hello-world/" class="article-nav-link">
+      <a href="/2019/08/19/learn-session/" class="article-nav-link">
         <strong class="article-nav-caption">Newer posts</strong>
         <div class="article-nav-title">
           
-            Hello World
+            (no title)
           
         </div>
       </a>
     
     
-      <a href="/2019/07/31/new-hexo/" class="article-nav-link">
+      <a href="/2019/08/11/router-control/" class="article-nav-link">
         <strong class="article-nav-caption">Olde posts</strong>
-        <div class="article-nav-title">hexo 采坑记</div>
+        <div class="article-nav-title">通过路由控制权限</div>
       </a>
     
   </nav>
