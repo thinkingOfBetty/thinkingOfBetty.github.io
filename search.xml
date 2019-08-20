@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+  
+    
+    <entry>
+      <title>fix error——error(loading chunk xx failed.)</title>
+      <link href="/2019/08/19/loadingChunkFailed/"/>
+      <url>/2019/08/19/loadingChunkFailed/</url>
+      
+        <content type="html"><![CDATA[<p>&emsp;&emsp;今天在项目中添加登陆功能之后，我发现第一次点击切换路由时是正常的，之后再切换时就会报错（loading chunk xx failed）一番搜索之后找到原因出在vue.config.js中的BASE_URL配置，当其在development时配置的是’./‘,去vue-cli官网看了下原来在history路由模式下，BASE_URL是不能采用相对路径的形式进行配置的。</p><p><img src="../img/publicPath.png" alt></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>通过小明的故事认识session</title>
+      <link href="/2019/08/13/learn-session/"/>
+      <url>/2019/08/13/learn-session/</url>
+      
+        <content type="html"><![CDATA[<p> &emsp;&emsp;今天趁着坐地铁的时间阅读了一篇文章，关于理解session的，个人觉得讲的还不错，于是进行一个小结。文章通过故事的形式阐述了session的概念，同时讲到一些客户端与服务端通信时有关安全方面的问题。<br> &emsp;&emsp;这个故事讲述了一个没有记忆力的小明开了杂货铺，通过用笔记本电脑记录用户信息的故事。安全相关——其中一种方式是笔记本电脑记录的信息就相当于session，每次用户来的时候通过提供小明随机提供的sessionID，小明通过该id在笔记本中找到顾客消费的信息，从而更好的服务客户。另外一种方式是小明通过解密加密过的cookie直接得到客户信息，但是这种方式会使得客户保存过长的cookie，不是非常好。</p><p><img src="../img/session.png" alt></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>通过路由控制权限</title>
+      <link href="/2019/08/11/router-control/"/>
+      <url>/2019/08/11/router-control/</url>
+      
+        <content type="html"><![CDATA[<p> &emsp;&emsp;由于那个项目区分了两种用户权限，所以需要对特定用户屏蔽某个路由，防止其通过访问这个路由而看到无关的内容。这个路由下展示的内容也不算敏感，所以这次是前端直接做的屏蔽。倘若是比较敏感的内容，肯定得通过接口去控制。一开始我是选择在配置路由表的地方直接判断用户的身份，从而决定是否推入对应的路由映射。一开始测试感觉是没问题的，就是在本地切换假数据也是可以正常根据用户权限进行展示的。但是当我在本页面进行刷新时，问题出现了——就算有权限的用户也看不到页面，而只能从外面重新进入这个页面。</p><p>&emsp;&emsp;找到产生bug的原因是——<font color="red">没有理清代码的加载顺序</font>，其实之前也有其它的bug是因为这个问题造成。这种bug并不都那么容易发现的，尤其当用到该字段的地方不是首页时。因为其它页面被访问时，获取该字段的代码一般都是已执行完毕。所以当你使用一个全局可能都会用到的变量时，尽量要清楚代码执行的顺序或者用到的地方是否响应式的（window.location赋值的变量不是响应式的，可以考虑有vue2.6发布的Vue.observer来代替。如果能保证请求是同步请求的才去选择这种方式对全局变量进行赋值，就算是赋值给store.state也要注意调用的地方，如果是在某个方法里调用时，则要考虑监听这个字段的方式；如果是在template中调用时则不必监听）。</p><p>&emsp;&emsp;说回路由的问题，因为如果是从外面直接进来的话，可以直接访问store里存放的用户权限的数据，但是如果是在当前页面直接刷新，此时由于访问用户信息的接口调用比路由表要慢，所以尽管后面接口返回了信息，那页不会再改变对应的路由展示。</p><p>&emsp;&emsp;一开始我想着在当前页去进行用户信息的监听，如果是没有权限的用户，则当它访问当前页时，在自动跳转回首页，这样子做其实是问题的，但是如果考虑到之后的扩展性，就是如果这种操作是针对很多页面都需要控制的，那么久需要在各个页面去进行这种判断。后面决定统一放在ROUTER.beforeEach里面进行处理，处理这个东西的过程我主要花了比较多的时间在重构获取用户信息的方式。</p><p>&emsp;&emsp;一开始获取用户信息是放在某个页面里面去做的，后面改成在store里面的action，保持了整个文件的一致性。同时，这个请求应该是同步的（同步会对后面的加载造成阻塞，所以这个我觉得还得再考虑），这样子可以确认之后的事情是在获取了用户信息之后再进行的操作。</p><p>&emsp;&emsp;另外一个需要注意的是，beforeEach这个钩子在路由每次改变的时候都会重新加载，因此不能在里面做比较消耗性能的事情，然后注意判断，只有在加载到对应路由的时候，才去做对应的事情，而不是每次切换路由都做一些当前路由下不需要做的事情。</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>同个项目合入两套代码（LSS&amp;&amp;VMS）</title>
+      <link href="/2019/08/06/one-code-include-two-project/"/>
+      <url>/2019/08/06/one-code-include-two-project/</url>
+      
+        <content type="html"><![CDATA[<p>&emsp;&emsp;(1)先要明确公共模块，在涉及到公共部分的时候，要先确认下需求，即确认另外的项目是否也需要同样的变动，如果不需要，则需要做兼容处理；<br>&emsp;&emsp;(2)然后确认下迭代的顺序跟时间（后面迭代的分支在转测前需要把另一个代码分支合入，在合入代码有冲突时，最好是两个项目的人同时决定留下的内容），如果出现合入代码时不明确迭代发布顺序的情况，那么极有可能发生改动内容丢失的情况。</p><p>&emsp;&emsp;举个例子在LSS迭代四跟vms1.0.1的开发过程中，我负责LSS而小卓负责vms，由于我们两个没有对齐迭代的发布时间，导致他误认为LSS迭代四的发布时间比vms1.0.1的发布时间要早，所以他在vms1.0.1转测之前合入了迭代四的内容。</p><p>&emsp;&emsp;但是在得知了迭代四原来是比1.0.1晚发布的(此时迭代四的分支还没转测，尚存在一些bug)，他进行了代码的回滚，但是这次代码回滚对后面我迭代四转测前合入vms分支时造成了影响，也就是我迭代四里面有些修改由于合入了vms1.0.1而丢失了，这是因为vms在进行代码回滚的时候进行了某些删除操作，而合并分支时选择了以vms分支的操作为准而导致的。所以如果一旦合错分支时，再次进行合入要小心比对之前回滚的代码。</p><p>&emsp;&emsp;由于这次回滚是在git上直接点击还原的，相当于通过新的合并请求来还原（新的合并请求就相当于这次请求的内容都进行了更改），并不是真正意义上的还原，所以下次合入该分支时，会认为这次还原之后的分支的修改时间是比较靠后的，也就是会以此次还原的代码为准，如果这次还原是通过还原主分支，则不会发生这种事情。</p><p>&emsp;&emsp;所以：如果代码合入了主分支之后，主分支后面又没有其他的合入时，要进行回滚可以考虑直接回滚主分支,回滚主分支的风险比较大。。特别是后面有新的合入。所以最好是合入其他迭代的分支之前先考虑好。</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>登录问题排查</title>
+      <link href="/2019/08/04/login-problem/"/>
+      <url>/2019/08/04/login-problem/</url>
+      
+        <content type="html"><![CDATA[<p>登录失败问题原因：<br>前端和后端联调时，后台加了一个http配置参数，导致前端cookie校验错误；</p><p>登录问题：登录时遇到接口返回“the csrf session token is missing”；</p><p>&emsp;&emsp;在后端同事一直没有定位到问题所在时，我自己尝试帮忙排查问题。一开始看到session token is missing的时候，我是觉得可能前端请求接口的时候参数有问题，但是后面发现整个请求过程跟以往并无异样。</p><p>&emsp;&emsp;后端同事比对了能在开发环境正常登陆的请求以及我本地登陆异常的接口，发现我本地登陆的时候少了一个session，此时项目经理还认为是Nginx配置的问题。</p><p>&emsp;&emsp;我忽然想起来之前工作的公司在遇到这种登陆接口挂掉的时候是通过复制能正常访问网站的cookie到本地开发环境进行登陆的，当我采取同样的方式时发现本地的浏览器的session确实比能正常登陆的少了一条，而复制了session之后也可以正常登陆。通过反馈这一现象，帮助后端同事更快地定位到错误。</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>季度下拉框代码优化</title>
+      <link href="/2019/08/03/quarter-select-code-opt/"/>
+      <url>/2019/08/03/quarter-select-code-opt/</url>
+      
+        <content type="html"><![CDATA[<p>&emsp;&emsp;结论：对比以上两种，最大的不同其实是思考逻辑。在思考这个内容的起初，我就给自己限定了思考的范围，就是我是从固定数量的季度数开始思考，然后就发现季度是要减去固定的数量才得出的，以致于写出冗长的代码。慢吃是一开始就认定这种是可以做成配置项的，所以思考的入口就很不一样，后面产出的东西就不一样。</p><p>在做这种通用性比较强的内容，一定要一开始就往可配置的方向去思考，否则可能就是做很多无用功，走很多的弯路。</p><p>优化之后的代码</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">getCurrentQuarter</span></span> () &#123;                                  //计算当前在哪个季度 </span><br><span class="line">    const MONTH = new Date().getMonth() + 1,            //用getMonth获取的月份比实际月份少一个月</span><br><span class="line">            CURRENTQUARTER = QUARTERS_OBJ[MONTH];</span><br><span class="line">            </span><br><span class="line">    <span class="built_in">return</span> CURRENTQUARTER;</span><br><span class="line"></span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line"> /**</span><br><span class="line"> * 将某个年份的指定季度推进指定数组里，如果order是<span class="literal">true</span>，则是取的指定年份的靠前的年份，反之是取的是靠后的年份</span><br><span class="line"> * @param &#123;String&#125; current //年份跟季度的组合 形如2019-02 </span><br><span class="line"> * @param &#123;Number&#125; beforeNum  //需要显示的季度数，不包括当前季度</span><br><span class="line"> * @<span class="built_in">return</span> &#123;Array&#125; </span><br><span class="line"> */</span><br><span class="line">getBeforeCurrentQuarter (current, beforeNum) &#123;</span><br><span class="line">    <span class="built_in">let</span> season = [<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'4'</span>],</span><br><span class="line">        len = season.length,</span><br><span class="line">        [year, quarter] = current.split(<span class="string">'-'</span>),</span><br><span class="line">        index = season.findIndex((item) =&gt; item === quarter),</span><br><span class="line">        arr = [],</span><br><span class="line">        loopIndex = index - 1;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">let</span> i = 0; i &lt; beforeNum; i++) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (loopIndex &lt; 0) &#123;</span><br><span class="line">            year--;</span><br><span class="line">            loopIndex = len - 1;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        arr.push(this.handleYearAndQuarter(year, season[loopIndex]));</span><br><span class="line">        loopIndex--;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> arr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>昨晚拿到人生中第一笔试用期工资，开心</title>
+      <link href="/2019/08/02/get-wage/"/>
+      <url>/2019/08/02/get-wage/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Hello World</title>
+      <link href="/2019/08/02/hello-world/"/>
+      <url>/2019/08/02/hello-world/</url>
+      
+        <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>hexo 采坑记</title>
+      <link href="/2019/07/31/new-hexo/"/>
+      <url>/2019/07/31/new-hexo/</url>
+      
+        <content type="html"><![CDATA[<p>查看了网上的教程，发现有些是部署到自己服务器的，有些是从安装git开始的，总是感觉不太适合自己，所以决定记录一个简历版本的hexo+githubpage的配合记录。</p><p>首先，你要在github上配置一个仓库，仓库名字也有讲究，比如我的GitHub名为thinkingOfBetty，所以我的仓库名字就是thinkingOfBetty.github.io。</p><p>然后按照下面的步骤进行操作：<br>（1）全局安装hexo npm install -g hexo<br>(2) 在空白文件下执行 hexo init<br>(3) hexo g (生成)   hexo s（启动服务） 执行上面两个步骤之后访问localhost:4000端口可以访问到界面<br>（4）如果你想修改主题，可以访问hexo主题网站上对应的git地址，然后进行下载$类似的命令：git clone <a href="https://github.com/litten/hexo-theme-yilia.git" target="_blank" rel="noopener">https://github.com/litten/hexo-theme-yilia.git</a> themes/yilia（下载好之后配置最外层的_config.yml中的theme）<br>（5）开始写文章：source中进行编写<br>（6）上传时要特别注意：master分支上只需要上传public中的内容，之后每次更新文件的时候只需要上传修改的对应静态文件。hexo分支上传的是环境文件。两个分支上都可以配置对应的.gitIgnore文件<br>（7）下次再新的pc上进行开发时，可以先拉去master的内容，然后通过git checkout 本地分支名 origin/远程分支名<br>（8）在hexo分支上写文章，然后git add .;git commit -m xx;git push xx; hexo g -d ；之后复制对应的变更给到master中进行上传，此时即可看到界面发生改变。</p><p>（9）特别注意的是如果直接从hexo上拉代码之后npm install是不能直接跑项目的，需要在安装对应的theme主题包，因为对应的主题包push不上去，安装见步骤4，安装之后再hexo s即可在本地启动</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+  
+  
+</search>
