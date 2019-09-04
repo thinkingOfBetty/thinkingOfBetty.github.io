@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>
-    fix error——error(loading chunk xx failed.) |
+    $set采坑记 |
     
     Hexo</title>
   
@@ -23,7 +23,7 @@
 <body>
 <main class="content">
   <section class="outer">
-  <article id="post-loadingChunkFailed" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  <article id="post-$set" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
     
@@ -31,7 +31,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      fix error——error(loading chunk xx failed.)
+      $set采坑记
     </h1>
   
   
@@ -44,8 +44,8 @@
 
     
       <div class="article-meta">
-        <a href="/2019/08/19/loadingChunkFailed/" class="article-date">
-  <time datetime="2019-08-18T16:00:00.000Z" itemprop="datePublished">2019-08-19</time>
+        <a href="/2019/09/04/$set/" class="article-date">
+  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">2019-09-04</time>
 </a>
         
       </div>
@@ -57,13 +57,12 @@
       
 
       
-        <p>&emsp;&emsp;今天在项目中添加登陆功能之后，我发现第一次点击切换路由时是正常的，之后再切换时就会报错（loading chunk xx failed）一番搜索之后找到原因出在vue.config.js中的BASE_URL配置，当其在development时配置的是’./‘,去vue-cli官网看了下原来在history路由模式下，BASE_URL是不能采用相对路径的形式进行配置的。</p>
-<p><img src="../img/publicPath.png" alt></p>
+        <p> &emsp;&emsp;前几天做后台管理系统时，里面有一个涉及到对申请者的信息修改，对原来已经有的申请者，只能进行积分的修改或者是删除申请者，同时对新增申请者可以选择姓名、调整积分。由于新增申请者跟原有申请者的操作跟展示效果都不一样，所以在展示申请者的时候，我用tag这个字段来进行区分，最后把这个tag传给后台进行数据处理。新增的obj在推入时就会一并添加一个tag属性，且其值为”add”，删除的是直接使用index对数组中某一项新增tag属性，且其值为delete。展示层对于tag值为delete的则不展示，由于tag这个属性是新增的，所以需要使用$set，否则视图层不会响应。在我添加$set之后，我发现了另外一个诡异的问题，就是在点击删除之后，后面新增的obj都不再展示。此时我打印数据，发现数据是正常的，就是被删除的obj的tag是delete，而之前新增的tag还是add，那为什么会不展示了呢？？这个问题我到现在也没搞懂，但是这个问题只有两种可能，一种是我的展示逻辑写的有问题，另一种就是vue有bug。等我去理解$set的源码或许会得到解答。<br> &emsp;&emsp;最后同事小赵提出了一种解决方案，在获取到申请者数据时，用$set循环为每一个obj添加tag属性，且该值置为空。然后后台有变动的时候，在直接修改tag属性。果然用这种方法之后，视图就正常显示了。但是我还是没搞懂这样子能解决问题的理由。。。等我找到答案时再回来更新，未完待续</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/19/loadingChunkFailed/" data-id="cjzjjohg60003hkfv6rj8q1xu"
+      <a data-url="http://yoursite.com/2019/09/04/$set/" data-id="ck04lutxy0000m8fvw99wn3h6"
          class="article-share-link">Share</a>
       
     </footer>
@@ -74,19 +73,10 @@
     
   <nav class="article-nav">
     
+    
       <a href="/2019/09/04/v-html/" class="article-nav-link">
-        <strong class="article-nav-caption">Newer posts</strong>
-        <div class="article-nav-title">
-          
-            用DOMPurify处理传入给v-html内容
-          
-        </div>
-      </a>
-    
-    
-      <a href="/2019/08/13/learn-session/" class="article-nav-link">
         <strong class="article-nav-caption">Olde posts</strong>
-        <div class="article-nav-title">通过小明的故事认识session</div>
+        <div class="article-nav-title">用DOMPurify处理传入给v-html内容</div>
       </a>
     
   </nav>

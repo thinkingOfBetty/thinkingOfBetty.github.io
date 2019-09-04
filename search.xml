@@ -4,6 +4,32 @@
   
     
     <entry>
+      <title>$set采坑记</title>
+      <link href="/2019/09/04/$set/"/>
+      <url>/2019/09/04/$set/</url>
+      
+        <content type="html"><![CDATA[<p> &emsp;&emsp;前几天做后台管理系统时，里面有一个涉及到对申请者的信息修改，对原来已经有的申请者，只能进行积分的修改或者是删除申请者，同时对新增申请者可以选择姓名、调整积分。由于新增申请者跟原有申请者的操作跟展示效果都不一样，所以在展示申请者的时候，我用tag这个字段来进行区分，最后把这个tag传给后台进行数据处理。新增的obj在推入时就会一并添加一个tag属性，且其值为”add”，删除的是直接使用index对数组中某一项新增tag属性，且其值为delete。展示层对于tag值为delete的则不展示，由于tag这个属性是新增的，所以需要使用$set，否则视图层不会响应。在我添加$set之后，我发现了另外一个诡异的问题，就是在点击删除之后，后面新增的obj都不再展示。此时我打印数据，发现数据是正常的，就是被删除的obj的tag是delete，而之前新增的tag还是add，那为什么会不展示了呢？？这个问题我到现在也没搞懂，但是这个问题只有两种可能，一种是我的展示逻辑写的有问题，另一种就是vue有bug。等我去理解$set的源码或许会得到解答。<br> &emsp;&emsp;最后同事小赵提出了一种解决方案，在获取到申请者数据时，用$set循环为每一个obj添加tag属性，且该值置为空。然后后台有变动的时候，在直接修改tag属性。果然用这种方法之后，视图就正常显示了。但是我还是没搞懂这样子能解决问题的理由。。。等我找到答案时再回来更新，未完待续</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>用DOMPurify处理传入给v-html内容</title>
+      <link href="/2019/09/04/v-html/"/>
+      <url>/2019/09/04/v-html/</url>
+      
+        <content type="html"><![CDATA[<p> &emsp;&emsp;昨天提交代码的时候，同事审核到代码里面用到v-html，要求需对后台传入内容进行转义，否则可能会有安全性问题，比如后台现在传给你的内容是依赖用户输入的，假设后台直接把那段文本传到前端，那么就容易发生xss攻击。假如用户传的是一段scrpit代码，就用可能直接导致网页瘫痪。当时我直接调用了转义函数，结果发现标签被当成文本输出了，所以我知道了所谓转义应该是指的过滤，把非法的输入给过滤。此时DOMPurify就派上用场了。<br> &emsp;&emsp;DOMPurify使用：一、引入这个库 二、可以直接定义一个全局配置常量 三、调用DOMPurify.sanitize函数对要传入给v-html的内容进行处理。e.g v-html=”DOMPurify.sanitize(itemData.value, DOMPURIFY_CONFIG)”</p><p> 全局配置参考如下：</p><p>DOMPURIFY_CONFIG = {<br> &emsp;&emsp; USE_PROFILES: {html: true},  //允许所有安全的HTML元素，但不允许SVG或MathML<br> &emsp;&emsp; ALLOWED_ATTR: [‘style’],     //允许html元素上的style属性<br> &emsp;&emsp; WHOLE_DOCUMENT: true         //返回整个文档，包括<html>标签，为false则只返回body内（不包括body）的内容，设置为true是t为了拿到<br> &emsp;&emsp; style标签<br>};</html></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>fix error——error(loading chunk xx failed.)</title>
       <link href="/2019/08/19/loadingChunkFailed/"/>
       <url>/2019/08/19/loadingChunkFailed/</url>
@@ -74,19 +100,6 @@
       <url>/2019/08/03/quarter-select-code-opt/</url>
       
         <content type="html"><![CDATA[<p>&emsp;&emsp;结论：对比以上两种，最大的不同其实是思考逻辑。在思考这个内容的起初，我就给自己限定了思考的范围，就是我是从固定数量的季度数开始思考，然后就发现季度是要减去固定的数量才得出的，以致于写出冗长的代码。慢吃是一开始就认定这种是可以做成配置项的，所以思考的入口就很不一样，后面产出的东西就不一样。</p><p>在做这种通用性比较强的内容，一定要一开始就往可配置的方向去思考，否则可能就是做很多无用功，走很多的弯路。</p><p>优化之后的代码</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">getCurrentQuarter</span></span> () &#123;                                  //计算当前在哪个季度 </span><br><span class="line">    const MONTH = new Date().getMonth() + 1,            //用getMonth获取的月份比实际月份少一个月</span><br><span class="line">            CURRENTQUARTER = QUARTERS_OBJ[MONTH];</span><br><span class="line">            </span><br><span class="line">    <span class="built_in">return</span> CURRENTQUARTER;</span><br><span class="line"></span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line"> /**</span><br><span class="line"> * 将某个年份的指定季度推进指定数组里，如果order是<span class="literal">true</span>，则是取的指定年份的靠前的年份，反之是取的是靠后的年份</span><br><span class="line"> * @param &#123;String&#125; current //年份跟季度的组合 形如2019-02 </span><br><span class="line"> * @param &#123;Number&#125; beforeNum  //需要显示的季度数，不包括当前季度</span><br><span class="line"> * @<span class="built_in">return</span> &#123;Array&#125; </span><br><span class="line"> */</span><br><span class="line">getBeforeCurrentQuarter (current, beforeNum) &#123;</span><br><span class="line">    <span class="built_in">let</span> season = [<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'4'</span>],</span><br><span class="line">        len = season.length,</span><br><span class="line">        [year, quarter] = current.split(<span class="string">'-'</span>),</span><br><span class="line">        index = season.findIndex((item) =&gt; item === quarter),</span><br><span class="line">        arr = [],</span><br><span class="line">        loopIndex = index - 1;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">let</span> i = 0; i &lt; beforeNum; i++) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (loopIndex &lt; 0) &#123;</span><br><span class="line">            year--;</span><br><span class="line">            loopIndex = len - 1;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        arr.push(this.handleYearAndQuarter(year, season[loopIndex]));</span><br><span class="line">        loopIndex--;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> arr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>昨晚拿到人生中第一笔试用期工资，开心</title>
-      <link href="/2019/08/02/get-wage/"/>
-      <url>/2019/08/02/get-wage/</url>
-      
-        <content type="html"><![CDATA[]]></content>
       
       
       
