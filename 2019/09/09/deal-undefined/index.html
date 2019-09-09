@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>
-    Archives: 2019/9 |
+    字段值可能为undefined的处理 |
     
     Hexo</title>
   
@@ -23,128 +23,84 @@
 <body>
 <main class="content">
   <section class="outer">
-  <article class="articles">
+  <article id="post-deal-undefined" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
     
-    <h1 class="page-type-title">2019/9</h1>
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      字段值可能为undefined的处理
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
 
     
-    
-    
-      
-      
-        
-        
-    <div class="archives-wrap">
-      <div class="archive-year-wrap">
-        <a href="/archives/2019" class="archive-year">2019</a>
-      </div>
-      <div class="archives">
-        
-        <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2019/09/09/optimize-build/" class="archive-article-date">
-  <time datetime="2019-09-08T16:00:00.000Z" itemprop="datePublished">09/09</time>
+      <div class="article-meta">
+        <a href="/2019/09/09/deal-undefined/" class="article-date">
+  <time datetime="2019-09-08T16:00:00.000Z" itemprop="datePublished">2019-09-09</time>
 </a>
-      
-  
-    <h2 itemprop="name">
-      <a class="archive-article-title" href="/2019/09/09/optimize-build/">优化项目打包后体积</a>
-    </h2>
-  
-  
-
-
-
-
-    </header>
-    
-    
-  </div>
-</article>
-        
-      
-      
-        <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2019/09/09/deal-undefined/" class="archive-article-date">
-  <time datetime="2019-09-08T16:00:00.000Z" itemprop="datePublished">09/09</time>
-</a>
-      
-  
-    <h2 itemprop="name">
-      <a class="archive-article-title" href="/2019/09/09/deal-undefined/">字段值可能为undefined的处理</a>
-    </h2>
-  
-  
-
-
-
-
-    </header>
-    
-    
-  </div>
-</article>
-        
-      
-      
-        <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2019/09/04/$set/" class="archive-article-date">
-  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">09/04</time>
-</a>
-      
-  
-    <h2 itemprop="name">
-      <a class="archive-article-title" href="/2019/09/04/$set/">$set采坑记</a>
-    </h2>
-  
-  
-
-
-
-
-    </header>
-    
-    
-  </div>
-</article>
-        
-      
-      
-        <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2019/09/04/v-html/" class="archive-article-date">
-  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">09/04</time>
-</a>
-      
-  
-    <h2 itemprop="name">
-      <a class="archive-article-title" href="/2019/09/04/v-html/">用DOMPurify处理传入给v-html内容</a>
-    </h2>
-  
-  
-
-
-
-
-    </header>
-    
-    
-  </div>
-</article>
-        
         
       </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p> &emsp;&emsp;前几天在写代码，后端传一个code值给前端，前端根据常量表决定展示的文案以及字体颜色，当code为-1时，不展示内容。因为后台有做不展示的处理，所以我误以为该字段是必定会返回的。后面出现bug才知道该字段是在某种特定类型的工单才会进行返回。于是我在页面渲染的时候用v-if=”data.code &amp;&amp; data.code !== -1”去进行判断，此时问题又来了。此前约定的code里面包含了0，而0也是要展示的，如果用这种方式进行判断，则code为0时这里的v-if的结果为false。所以之后开发应当明确两点，最大可能地避免bug。<br> &emsp;&emsp;一、明确字段是否返回，尽可能地处理字段为undifined的情况<br> &emsp;&emsp;二、处理字段为undifined时，分情况，如果该字段是一个object类型的，用loadash中的get进行处理（此处要注意loadash的按需引入方法）；如果该字段是某个对象的属性，可以用obj.hasOwnProperty进行判断，而不是用data.code &amp;&amp; xxx 去进行判断，因为这里的code可能为0或者是空字符串。</p>
+
+      
     </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/09/09/deal-undefined/" data-id="ck0brfxx20000gsfvjr7ci3a0"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
     
+  <nav class="article-nav">
+    
+      <a href="/2019/09/09/optimize-build/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            优化项目打包后体积
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2019/09/04/$set/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">$set采坑记</div>
+      </a>
+    
+  </nav>
+
+
   
 
   
+    
+  
+
+</article>
+
+
+
 </section>
   <footer class="footer">
   <div class="outer">
