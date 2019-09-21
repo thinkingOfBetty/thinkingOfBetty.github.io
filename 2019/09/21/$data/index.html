@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>
-    $set采坑记 |
+    Vue中的data函数会对数据进行深拷贝 |
     
     Hexo</title>
   
@@ -23,7 +23,7 @@
 <body>
 <main class="content">
   <section class="outer">
-  <article id="post-$set" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  <article id="post-$data" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
     
@@ -31,7 +31,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      $set采坑记
+      Vue中的data函数会对数据进行深拷贝
     </h1>
   
   
@@ -44,8 +44,8 @@
 
     
       <div class="article-meta">
-        <a href="/2019/09/04/$set/" class="article-date">
-  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">2019-09-04</time>
+        <a href="/2019/09/21/$data/" class="article-date">
+  <time datetime="2019-09-20T16:00:00.000Z" itemprop="datePublished">2019-09-21</time>
 </a>
         
       </div>
@@ -57,12 +57,12 @@
       
 
       
-        <p> &emsp;&emsp;前几天做后台管理系统时，里面有一个涉及到对申请者的信息修改，对原来已经有的申请者，只能进行积分的修改或者是删除申请者，同时对新增申请者可以选择姓名、调整积分。由于新增申请者跟原有申请者的操作跟展示效果都不一样，所以在展示申请者的时候，我用tag这个字段来进行区分，最后把这个tag传给后台进行数据处理。新增的obj在推入时就会一并添加一个tag属性，且其值为”add”，删除的是直接使用index对数组中某一项新增tag属性，且其值为delete。展示层对于tag值为delete的则不展示，由于tag这个属性是新增的，所以需要使用$set，否则视图层不会响应。在我添加$set之后，我发现了另外一个诡异的问题，就是在点击删除之后，后面新增的obj都不再展示。此时我打印数据，发现数据是正常的，就是被删除的obj的tag是delete，而之前新增的tag还是add，那为什么会不展示了呢？？这个问题我到现在也没搞懂，但是这个问题只有两种可能，一种是我的展示逻辑写的有问题，另一种就是vue有bug。等我去理解$set的源码或许会得到解答。<br> &emsp;&emsp;最后同事小赵提出了一种解决方案，在获取到申请者数据时，用$set循环为每一个obj添加tag属性，且该值置为空。然后后台有变动的时候，在直接修改tag属性。果然用这种方法之后，视图就正常显示了。但是我还是没搞懂这样子能解决问题的理由。。。等我找到答案时再回来更新，未完待续</p>
+        <p> &emsp;&emsp;今天代码rv的时候，审核人说不能直接修改父组件传的值，我代码里写的是 data() {return {commonForm: form}},然后通过修改commonForm的值，最后提交的也是commonform。按照常理来说，我改变commonForm确实form也会改变，但是我想起来我写了不少代码都是这种操作，但是控制台也没有警告说我修改了父组件的值。结果查了vue的文档，说是data函数会对数据进行深拷贝。因为我们不需要再额外地进行处理了。<br> &emsp;&emsp;<br><img src="../img/$data.png" alt></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/04/$set/" data-id="ck0tbzurj0000hsfvp3gaxk6f"
+      <a data-url="http://yoursite.com/2019/09/21/$data/" data-id="ck0tf49ze00008wfvpnose090"
          class="article-share-link">Share</a>
       
     </footer>
@@ -73,19 +73,19 @@
     
   <nav class="article-nav">
     
-      <a href="/2019/09/04/v-html/" class="article-nav-link">
+      <a href="/2019/09/21/forEach/" class="article-nav-link">
         <strong class="article-nav-caption">Newer posts</strong>
         <div class="article-nav-title">
           
-            用DOMPurify处理传入给v-html内容
+            forEach不能采用break或者returen false终止循环
           
         </div>
       </a>
     
     
-      <a href="/2019/08/19/loadingChunkFailed/" class="article-nav-link">
+      <a href="/2019/09/09/deal-undefined/" class="article-nav-link">
         <strong class="article-nav-caption">Olde posts</strong>
-        <div class="article-nav-title">fix error——error(loading chunk xx failed.)</div>
+        <div class="article-nav-title">字段值可能为undefined的处理</div>
       </a>
     
   </nav>
