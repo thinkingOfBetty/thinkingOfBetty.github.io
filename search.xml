@@ -4,11 +4,11 @@
   
     
     <entry>
-      <title>forEach不能采用break或者returen false终止循环</title>
-      <link href="/2019/09/21/forEach/"/>
-      <url>/2019/09/21/forEach/</url>
+      <title>var location = window.location引发的坑</title>
+      <link href="/2019/09/29/location/"/>
+      <url>/2019/09/29/location/</url>
       
-        <content type="html"><![CDATA[<p> &emsp;&emsp;前几天写PPT项目代码的时候，想要找到符合条件的一项，就跳出循环，不要继续循环，结果我用了break发现没用，查了一下原来forEach要终止循环需要通过try catch。。。于是发现some是提前终止循环的。但是some也有个坑要提防，那就是some去遍历一个空数组，会返回false；</p>]]></content>
+        <content type="html"><![CDATA[<p>&emsp;&emsp;之前项目修改了一个东西，就是将之前的login_url由指定的字符串改成了动态的ip，在使用了location去保存window.location之后，使得网页每次加载时都一直疯狂地请求资源，感觉是陷入了循环。这个bug我找了几个小时都没找到。当时是有发现当login_url后面加一些会报错的符号时，页面能正常加载，所以就把错误定位在了url上，可是后面一直把错误定位在后端对请求的转发造成没成功请求到资源的问题，现在仔细想，当时定位bug的思路是有很大问题的。</p><p>&emsp;&emsp;首先，我应该意识到有代码造成了循环——因为查看了网络资源确实不断地在加载。其次，我应该意识到login_url的拼写错误或者是资源定位错误都不可能会有不断加载资源的问题。所以之后想问题纯粹点，别想那些让人感觉困惑的点。如果一开始就想到循环的问题，或许能早点解决问题。</p><p>&emsp;&emsp;最后的还需要学习的就是不要用关键字作为变量名——js关键字包括，这次var location其实指代的就是window.location，如果我有在控制台进行尝试，应该是可以非常快速的发现问题的，尽管这个代码不会报错，但是在控制台造成的问题确可以让我很快地意识到问题在哪里。</p><p>&emsp;&emsp;附上一个有保留关键字的<a href="https://www.jianshu.com/p/3c2cfcc2d227" target="_blank" rel="noopener">链接</a></p>]]></content>
       
       
       
@@ -17,11 +17,24 @@
     
     
     <entry>
-      <title>Vue中的data函数会对数据进行深拷贝</title>
+      <title>Vue中的data函数不会对数据进行深拷贝</title>
       <link href="/2019/09/21/$data/"/>
       <url>/2019/09/21/$data/</url>
       
-        <content type="html"><![CDATA[<p> &emsp;&emsp;今天代码rv的时候，审核人说不能直接修改父组件传的值，我代码里写的是 data() {return {commonForm: form}},然后通过修改commonForm的值，最后提交的也是commonform。按照常理来说，我改变commonForm确实form也会改变，但是我想起来我写了不少代码都是这种操作，但是控制台也没有警告说我修改了父组件的值。结果查了vue的文档，说是data函数会对数据进行深拷贝。因为我们不需要再额外地进行处理了。<br> &emsp;&emsp;<br><img src="../img/$data.png" alt></p>]]></content>
+        <content type="html"><![CDATA[<p> &emsp;&emsp;今天代码rv的时候，审核人说不能直接修改父组件传的值，我代码里写的是 data() {return {commonForm: form}},然后通过修改commonForm的值，最后提交的也是commonform。按照常理来说，我改变commonForm确实form也会改变，但是我想起来我写了不少代码都是这种操作，但是控制台也没有警告说我修改了父组件的值，此时我以为Vue中的data函数会对数据进行深拷贝。结果后面在父组件进行监听，当加上deep:true时，发现子组件的commonForm进行修改时，父组件也会被修改，但是当没有加上deep:true时，则监听不到，由此推断出控制台监听的那种是默认为deep:false的，这种情况下，只有改变this.form对象的地址，控制台才会报错。由于这种操作确实改变了父组件的值，违反了单向数据流，所以需要使用深拷贝！！<br> &emsp;&emsp;<br><img src="../img/$data.png" alt></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>forEach不能采用break或者returen false终止循环</title>
+      <link href="/2019/09/21/forEach/"/>
+      <url>/2019/09/21/forEach/</url>
+      
+        <content type="html"><![CDATA[<p> &emsp;&emsp;前几天写PPT项目代码的时候，想要找到符合条件的一项，就跳出循环，不要继续循环，结果我用了break发现没用，查了一下原来forEach要终止循环需要通过try catch。。。于是发现some是提前终止循环的。但是some也有个坑要提防，那就是some去遍历一个空数组，会返回false；</p>]]></content>
       
       
       
