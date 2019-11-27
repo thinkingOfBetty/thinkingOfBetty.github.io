@@ -57,6 +57,119 @@
 
     
       
+        <article id="post-window-open" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/11/27/window-open/">window.open</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/11/27/window-open/" class="article-date">
+  <time datetime="2019-11-26T16:00:00.000Z" itemprop="datePublished">2019-11-27</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>  &emsp;&emsp;<br><img src="../img/window.png" alt></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/11/27/window-open/" data-id="ck3gti2wn0001osfv0wdqgem7"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        <article id="post-polling" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/11/27/polling/">前端不要轻易轮询</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/11/27/polling/" class="article-date">
+  <time datetime="2019-11-26T16:00:00.000Z" itemprop="datePublished">2019-11-27</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;如非必要，尽量不要轻易轮询。盲目地用轮询往往会增加工作量、给服务器造成负担、没有实现实际功能。这里阐述下几种本来需要前端轮询、后面变成后端控制的场景。</p>
+<p>&emsp;&emsp;一、后端操作有延迟、比如需要社保苏醒时间等<br>&emsp;&emsp;执行某种编辑操作之后，前端在成功回调中刷新页面，结果数据不刷新。后端有某些操作是会延迟1~3秒才能真正地生效，这种情况，不要轮询、不要前端去瞎setTimeout,而是要让后端在操作真正完成之前将接口处于挂起（pending状态）。这样子才能将页面刷新的时间缩短至最小。</p>
+<p>&emsp;&emsp;二、后端也去轮询查询<br>&emsp;&emsp;场景：后端去轮询某个接口，最长时间不超过一分钟（其实一般如果请求封装的时候有设置超时时间，可能需要考虑轮询，或者看看能不能将请求的超时时间改成可配置，默认是设置的时间，但是可以针对特定接口进行修改）。如果项目没有设置或者设置的超时时间比后端（后端去轮询一般也有设置超时时间）的要长，那么应当让后端将接口挂起，而不是轮询。</p>
+<p>&emsp;&emsp;三、业务需求：实时更新服务截止日期。<br>&emsp;&emsp;这种轮询需要明确是否有必要，像我们的webui项目的token过期时间就是半小时，这种一般重新登录之后，会自己重新去请求服务是否过期的接口，可以不再轮询。这种情况，如果要轮询，需要尽量减少轮询的时间，比如距离服务过期还剩下一天才开始轮询或者是其他方法</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/11/27/polling/" data-id="ck3gti2wf0000osfvojkxc3wm"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-location" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -280,6 +393,61 @@
 
 
       
+        <article id="post-$set" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/09/04/$set/">$set采坑记</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/09/04/$set/" class="article-date">
+  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">2019-09-04</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p> &emsp;&emsp;前几天做后台管理系统时，里面有一个涉及到对申请者的信息修改，对原来已经有的申请者，只能进行积分的修改或者是删除申请者，同时对新增申请者可以选择姓名、调整积分。由于新增申请者跟原有申请者的操作跟展示效果都不一样，所以在展示申请者的时候，我用tag这个字段来进行区分，最后把这个tag传给后台进行数据处理。新增的obj在推入时就会一并添加一个tag属性，且其值为”add”，删除的是直接使用index对数组中某一项新增tag属性，且其值为delete。展示层对于tag值为delete的则不展示，由于tag这个属性是新增的，所以需要使用$set，否则视图层不会响应。在我添加$set之后，我发现了另外一个诡异的问题，就是在点击删除之后，后面新增的obj都不再展示。此时我打印数据，发现数据是正常的，就是被删除的obj的tag是delete，而之前新增的tag还是add，那为什么会不展示了呢？？这个问题我到现在也没搞懂，但是这个问题只有两种可能，一种是我的展示逻辑写的有问题，另一种就是vue有bug。等我去理解$set的源码或许会得到解答。<br> &emsp;&emsp;最后同事小赵提出了一种解决方案，在获取到申请者数据时，用$set循环为每一个obj添加tag属性，且该值置为空。然后后台有变动的时候，在直接修改tag属性。果然用这种方法之后，视图就正常显示了。但是我还是没搞懂这样子能解决问题的理由。。。等我找到答案时再回来更新，未完待续</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/09/04/$set/" data-id="ck14x7mxz0001tofvbq51oxkx"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-v-html" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -322,61 +490,6 @@
     </div>
     <footer class="article-footer">
       <a data-url="http://yoursite.com/2019/09/04/v-html/" data-id="ck14x7mz5000dtofvoqdgycto"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-$set" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/09/04/$set/">$set采坑记</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/09/04/$set/" class="article-date">
-  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">2019-09-04</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p> &emsp;&emsp;前几天做后台管理系统时，里面有一个涉及到对申请者的信息修改，对原来已经有的申请者，只能进行积分的修改或者是删除申请者，同时对新增申请者可以选择姓名、调整积分。由于新增申请者跟原有申请者的操作跟展示效果都不一样，所以在展示申请者的时候，我用tag这个字段来进行区分，最后把这个tag传给后台进行数据处理。新增的obj在推入时就会一并添加一个tag属性，且其值为”add”，删除的是直接使用index对数组中某一项新增tag属性，且其值为delete。展示层对于tag值为delete的则不展示，由于tag这个属性是新增的，所以需要使用$set，否则视图层不会响应。在我添加$set之后，我发现了另外一个诡异的问题，就是在点击删除之后，后面新增的obj都不再展示。此时我打印数据，发现数据是正常的，就是被删除的obj的tag是delete，而之前新增的tag还是add，那为什么会不展示了呢？？这个问题我到现在也没搞懂，但是这个问题只有两种可能，一种是我的展示逻辑写的有问题，另一种就是vue有bug。等我去理解$set的源码或许会得到解答。<br> &emsp;&emsp;最后同事小赵提出了一种解决方案，在获取到申请者数据时，用$set循环为每一个obj添加tag属性，且该值置为空。然后后台有变动的时候，在直接修改tag属性。果然用这种方法之后，视图就正常显示了。但是我还是没搞懂这样子能解决问题的理由。。。等我找到答案时再回来更新，未完待续</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/04/$set/" data-id="ck14x7mxz0001tofvbq51oxkx"
          class="article-share-link">Share</a>
       
     </footer>
@@ -489,125 +602,6 @@
     </div>
     <footer class="article-footer">
       <a data-url="http://yoursite.com/2019/08/13/learn-session/" data-id="ck14x7myf0006tofvjea4v1u6"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-router-control" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/08/11/router-control/">通过路由控制权限</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/08/11/router-control/" class="article-date">
-  <time datetime="2019-08-10T16:00:00.000Z" itemprop="datePublished">2019-08-11</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p> &emsp;&emsp;由于那个项目区分了两种用户权限，所以需要对特定用户屏蔽某个路由，防止其通过访问这个路由而看到无关的内容。这个路由下展示的内容也不算敏感，所以这次是前端直接做的屏蔽。倘若是比较敏感的内容，肯定得通过接口去控制。一开始我是选择在配置路由表的地方直接判断用户的身份，从而决定是否推入对应的路由映射。一开始测试感觉是没问题的，就是在本地切换假数据也是可以正常根据用户权限进行展示的。但是当我在本页面进行刷新时，问题出现了——就算有权限的用户也看不到页面，而只能从外面重新进入这个页面。</p>
-<p>&emsp;&emsp;找到产生bug的原因是——<font color="red">没有理清代码的加载顺序</font>，其实之前也有其它的bug是因为这个问题造成。这种bug并不都那么容易发现的，尤其当用到该字段的地方不是首页时。因为其它页面被访问时，获取该字段的代码一般都是已执行完毕。所以当你使用一个全局可能都会用到的变量时，尽量要清楚代码执行的顺序或者用到的地方是否响应式的（window.location赋值的变量不是响应式的，可以考虑有vue2.6发布的Vue.observer来代替。如果能保证请求是同步请求的才去选择这种方式对全局变量进行赋值，就算是赋值给store.state也要注意调用的地方，如果是在某个方法里调用时，则要考虑监听这个字段的方式；如果是在template中调用时则不必监听）。</p>
-<p>&emsp;&emsp;说回路由的问题，因为如果是从外面直接进来的话，可以直接访问store里存放的用户权限的数据，但是如果是在当前页面直接刷新，此时由于访问用户信息的接口调用比路由表要慢，所以尽管后面接口返回了信息，那页不会再改变对应的路由展示。</p>
-<p>&emsp;&emsp;一开始我想着在当前页去进行用户信息的监听，如果是没有权限的用户，则当它访问当前页时，在自动跳转回首页，这样子做其实是问题的，但是如果考虑到之后的扩展性，就是如果这种操作是针对很多页面都需要控制的，那么久需要在各个页面去进行这种判断。后面决定统一放在ROUTER.beforeEach里面进行处理，处理这个东西的过程我主要花了比较多的时间在重构获取用户信息的方式。</p>
-<p>&emsp;&emsp;一开始获取用户信息是放在某个页面里面去做的，后面改成在store里面的action，保持了整个文件的一致性。同时，这个请求应该是同步的（同步会对后面的加载造成阻塞，所以这个我觉得还得再考虑），这样子可以确认之后的事情是在获取了用户信息之后再进行的操作。</p>
-<p>&emsp;&emsp;另外一个需要注意的是，beforeEach这个钩子在路由每次改变的时候都会重新加载，因此不能在里面做比较消耗性能的事情，然后注意判断，只有在加载到对应路由的时候，才去做对应的事情，而不是每次切换路由都做一些当前路由下不需要做的事情。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/11/router-control/" data-id="ck14x7myz000ctofv3fv7te56"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-one-code-include-two-project" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/08/06/one-code-include-two-project/">同个项目合入两套代码（LSS&amp;&amp;VMS）</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/08/06/one-code-include-two-project/" class="article-date">
-  <time datetime="2019-08-05T16:00:00.000Z" itemprop="datePublished">2019-08-06</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p>&emsp;&emsp;(1)先要明确公共模块，在涉及到公共部分的时候，要先确认下需求，即确认另外的项目是否也需要同样的变动，如果不需要，则需要做兼容处理；<br>&emsp;&emsp;(2)然后确认下迭代的顺序跟时间（后面迭代的分支在转测前需要把另一个代码分支合入，在合入代码有冲突时，最好是两个项目的人同时决定留下的内容），如果出现合入代码时不明确迭代发布顺序的情况，那么极有可能发生改动内容丢失的情况。</p>
-<p>&emsp;&emsp;举个例子在LSS迭代四跟vms1.0.1的开发过程中，我负责LSS而小卓负责vms，由于我们两个没有对齐迭代的发布时间，导致他误认为LSS迭代四的发布时间比vms1.0.1的发布时间要早，所以他在vms1.0.1转测之前合入了迭代四的内容。</p>
-<p>&emsp;&emsp;但是在得知了迭代四原来是比1.0.1晚发布的(此时迭代四的分支还没转测，尚存在一些bug)，他进行了代码的回滚，但是这次代码回滚对后面我迭代四转测前合入vms分支时造成了影响，也就是我迭代四里面有些修改由于合入了vms1.0.1而丢失了，这是因为vms在进行代码回滚的时候进行了某些删除操作，而合并分支时选择了以vms分支的操作为准而导致的。所以如果一旦合错分支时，再次进行合入要小心比对之前回滚的代码。</p>
-<p>&emsp;&emsp;由于这次回滚是在git上直接点击还原的，相当于通过新的合并请求来还原（新的合并请求就相当于这次请求的内容都进行了更改），并不是真正意义上的还原，所以下次合入该分支时，会认为这次还原之后的分支的修改时间是比较靠后的，也就是会以此次还原的代码为准，如果这次还原是通过还原主分支，则不会发生这种事情。</p>
-<p>&emsp;&emsp;所以：如果代码合入了主分支之后，主分支后面又没有其他的合入时，要进行回滚可以考虑直接回滚主分支,回滚主分支的风险比较大。。特别是后面有新的合入。所以最好是合入其他迭代的分支之前先考虑好。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/06/one-code-include-two-project/" data-id="ck14x7myo000atofvamoxx2xf"
          class="article-share-link">Share</a>
       
     </footer>
