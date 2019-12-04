@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>
-    forEach不能采用break或者returen false终止循环 |
+    理解热更新原理 |
     
     Hexo</title>
   
@@ -23,7 +23,7 @@
 <body>
 <main class="content">
   <section class="outer">
-  <article id="post-forEach" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  <article id="post-hot" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
     
@@ -31,7 +31,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      forEach不能采用break或者returen false终止循环
+      理解热更新原理
     </h1>
   
   
@@ -44,8 +44,8 @@
 
     
       <div class="article-meta">
-        <a href="/2019/09/21/forEach/" class="article-date">
-  <time datetime="2019-09-20T16:00:00.000Z" itemprop="datePublished">2019-09-21</time>
+        <a href="/2019/12/04/hot/" class="article-date">
+  <time datetime="2019-12-03T16:00:00.000Z" itemprop="datePublished">2019-12-04</time>
 </a>
         
       </div>
@@ -57,12 +57,13 @@
       
 
       
-        <p> &emsp;&emsp;前几天写PPT项目代码的时候，想要找到符合条件的一项，就跳出循环，不要继续循环，结果我用了break发现没用，查了一下原来forEach要终止循环需要通过try catch。。。于是发现some是提前终止循环的。但是some也有个坑要提防，那就是some去遍历一个空数组，会返回false；</p>
+        <p> &emsp;&emsp;今天学习了webpack-dev-server热更新的原理，大致的意思就是借助express启动的websocket让浏览器跟本地服务器建立双向的通信，然后通过webpack的compile的watch功能，监听文件的改变，然后通过websocker告诉浏览器最新的hash以及触发ok事件，触发ok事件之后，会通过webpack去检查更新的内容，从而去决定是reload还是进行模块替换，如果要模块替换，就调用hotApply函数进行新旧模块代码的替换，然后结合_webpack_require_去执行代码。因为这一切都涉及到当前运行环境，所以需要一开始时将websocket跟dev-server的代码塞进去bundle中，让客户端中也能执行这一块的代码。<br>&emsp;&emsp;另外两个需要注意的点就是：<br>（一）获取当前更新模块id时，是通过jsonp，可以立即直接脚本<br>（二）当webpack监听到文件变化之后，是写进内存而不是写进文件系统，这样可以加快速度。<br>自己理解画的图：<br><img src="../img/hot3.png" alt></p>
+<p>掘金跟知乎上的图：<br><img src="../img/hot1.png" alt><br><img src="../img/hot2.jpg" alt></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/21/forEach/" data-id="ck3r9odmh000mnofv5ogmsi1i"
+      <a data-url="http://yoursite.com/2019/12/04/hot/" data-id="ck3r9qy290010nofvesr1nk6q"
          class="article-share-link">Share</a>
       
     </footer>
@@ -73,19 +74,10 @@
     
   <nav class="article-nav">
     
-      <a href="/2019/09/21/$data/" class="article-nav-link">
-        <strong class="article-nav-caption">Newer posts</strong>
-        <div class="article-nav-title">
-          
-            Vue中的data函数不会对数据进行深拷贝
-          
-        </div>
-      </a>
     
-    
-      <a href="/2019/09/09/deal-undefined/" class="article-nav-link">
+      <a href="/2019/11/28/button-load/" class="article-nav-link">
         <strong class="article-nav-caption">Olde posts</strong>
-        <div class="article-nav-title">字段值可能为undefined的处理</div>
+        <div class="article-nav-title">封装load-btn</div>
       </a>
     
   </nav>
