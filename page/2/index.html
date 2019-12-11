@@ -57,6 +57,61 @@
 
     
       
+        <article id="post-$set" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/09/04/$set/">$set采坑记</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/09/04/$set/" class="article-date">
+  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">2019-09-04</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p> &emsp;&emsp;前几天做后台管理系统时，里面有一个涉及到对申请者的信息修改，对原来已经有的申请者，只能进行积分的修改或者是删除申请者，同时对新增申请者可以选择姓名、调整积分。由于新增申请者跟原有申请者的操作跟展示效果都不一样，所以在展示申请者的时候，我用tag这个字段来进行区分，最后把这个tag传给后台进行数据处理。新增的obj在推入时就会一并添加一个tag属性，且其值为”add”，删除的是直接使用index对数组中某一项新增tag属性，且其值为delete。展示层对于tag值为delete的则不展示，由于tag这个属性是新增的，所以需要使用$set，否则视图层不会响应。在我添加$set之后，我发现了另外一个诡异的问题，就是在点击删除之后，后面新增的obj都不再展示。此时我打印数据，发现数据是正常的，就是被删除的obj的tag是delete，而之前新增的tag还是add，那为什么会不展示了呢？？这个问题我到现在也没搞懂，但是这个问题只有两种可能，一种是我的展示逻辑写的有问题，另一种就是vue有bug。等我去理解$set的源码或许会得到解答。<br> &emsp;&emsp;最后同事小赵提出了一种解决方案，在获取到申请者数据时，用$set循环为每一个obj添加tag属性，且该值置为空。然后后台有变动的时候，在直接修改tag属性。果然用这种方法之后，视图就正常显示了。但是我还是没搞懂这样子能解决问题的理由。。。等我找到答案时再回来更新，未完待续</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/09/04/$set/" data-id="ck40xr43k0001lgfvz4s8b8o1"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-loadingChunkFailed" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -97,7 +152,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/19/loadingChunkFailed/" data-id="ck3r9odne000rnofvuumzjajb"
+      <a data-url="http://yoursite.com/2019/08/19/loadingChunkFailed/" data-id="ck40xr43z0007lgfvls1gbyhc"
          class="article-share-link">Share</a>
       
     </footer>
@@ -153,7 +208,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/13/learn-session/" data-id="ck3r9odmw000onofv7zixkheb"
+      <a data-url="http://yoursite.com/2019/08/13/learn-session/" data-id="ck40xr43x0006lgfv33h3ihjm"
          class="article-share-link">Share</a>
       
     </footer>
@@ -213,7 +268,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/11/router-control/" data-id="ck3r9odog000ynofvbrzxfse8"
+      <a data-url="http://yoursite.com/2019/08/11/router-control/" data-id="ck40xr44i000flgfvuygpjzf1"
          class="article-share-link">Share</a>
       
     </footer>
@@ -272,7 +327,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/06/one-code-include-two-project/" data-id="ck3r9odnn000tnofvm15bl3pf"
+      <a data-url="http://yoursite.com/2019/08/06/one-code-include-two-project/" data-id="ck40xr449000clgfvqhxqanxq"
          class="article-share-link">Share</a>
       
     </footer>
@@ -331,7 +386,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/04/login-problem/" data-id="ck3r9odny000unofvoizxlbfd"
+      <a data-url="http://yoursite.com/2019/08/04/login-problem/" data-id="ck40xr4420009lgfvl39zjtu7"
          class="article-share-link">Share</a>
       
     </footer>
@@ -388,7 +443,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/03/quarter-select-code-opt/" data-id="ck3r9odoe000xnofvh3l6i5tx"
+      <a data-url="http://yoursite.com/2019/08/03/quarter-select-code-opt/" data-id="ck40xr44g000elgfv2freifgb"
          class="article-share-link">Share</a>
       
     </footer>
@@ -455,7 +510,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/02/hello-world/" data-id="ck3r9odmp000nnofvwypxatxn"
+      <a data-url="http://yoursite.com/2019/08/02/hello-world/" data-id="ck40xr43q0003lgfvtneummr2"
          class="article-share-link">Share</a>
       
     </footer>
@@ -513,7 +568,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/31/new-hexo/" data-id="ck3r9odo5000vnofvhvpp478x"
+      <a data-url="http://yoursite.com/2019/07/31/new-hexo/" data-id="ck40xr447000blgfvulv0l615"
          class="article-share-link">Share</a>
       
     </footer>

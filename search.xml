@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>用reflog拯救reset --hard造成的文件丢失</title>
+      <link href="/2019/12/11/reflog/"/>
+      <url>/2019/12/11/reflog/</url>
+      
+        <content type="html"><![CDATA[<p>&emsp;&emsp;依旧记得之前的一次reset –hard给我造成的心理阴影，要是早点get到这个点，或许当初会少些焦虑。<br>接下来还原一下reset –hard之后的场景以及记录下修复时需要用到什么指令。</p><p>首先用git log查看当前的commit记录<br><img src="../img/reflog/1.PNG" alt><br>然后用git reset –hard来强制回退commit，此时再用git log查看了之前的reflog的提交记录已经不见了<br><img src="../img/reflog/2.PNG" alt><br>此时如果要重新找回reflog的commit，需要用git reflog查看你在git上进行的每一步操作，然后找到之前的reflog的hash，再用git reset –hard 回退到丢失的commit。<font color="red">此时如果后面有新的commit，可以结合git cherry-pick来使用</font><br><img src="../img/reflog/3.PNG" alt><br>此时查看commit已经成功拾回。<br><img src="../img/reflog/4.PNG" alt></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>理解热更新原理</title>
       <link href="/2019/12/04/hot/"/>
       <url>/2019/12/04/hot/</url>
@@ -69,11 +82,11 @@
     
     
     <entry>
-      <title>Vue中的data函数不会对数据进行深拷贝</title>
-      <link href="/2019/09/21/$data/"/>
-      <url>/2019/09/21/$data/</url>
+      <title>forEach不能采用break或者returen false终止循环</title>
+      <link href="/2019/09/21/forEach/"/>
+      <url>/2019/09/21/forEach/</url>
       
-        <content type="html"><![CDATA[<p> &emsp;&emsp;今天代码rv的时候，审核人说不能直接修改父组件传的值，我代码里写的是 data() {return {commonForm: form}},然后通过修改commonForm的值，最后提交的也是commonform。按照常理来说，我改变commonForm确实form也会改变，但是我想起来我写了不少代码都是这种操作，但是控制台也没有警告说我修改了父组件的值，此时我以为Vue中的data函数会对数据进行深拷贝。结果后面在父组件进行监听，当加上deep:true时，发现子组件的commonForm进行修改时，父组件也会被修改，但是当没有加上deep:true时，则监听不到，由此推断出控制台监听的那种是默认为deep:false的，这种情况下，只有改变this.form对象的地址，控制台才会报错。由于这种操作确实改变了父组件的值，违反了单向数据流，所以需要使用深拷贝！！<br> &emsp;&emsp;<br><img src="../img/$data.png" alt></p>]]></content>
+        <content type="html"><![CDATA[<p> &emsp;&emsp;前几天写PPT项目代码的时候，想要找到符合条件的一项，就跳出循环，不要继续循环，结果我用了break发现没用，查了一下原来forEach要终止循环需要通过try catch。。。于是发现some是提前终止循环的。但是some也有个坑要提防，那就是some去遍历一个空数组，会返回false；</p>]]></content>
       
       
       
@@ -82,11 +95,11 @@
     
     
     <entry>
-      <title>forEach不能采用break或者returen false终止循环</title>
-      <link href="/2019/09/21/forEach/"/>
-      <url>/2019/09/21/forEach/</url>
+      <title>Vue中的data函数不会对数据进行深拷贝</title>
+      <link href="/2019/09/21/$data/"/>
+      <url>/2019/09/21/$data/</url>
       
-        <content type="html"><![CDATA[<p> &emsp;&emsp;前几天写PPT项目代码的时候，想要找到符合条件的一项，就跳出循环，不要继续循环，结果我用了break发现没用，查了一下原来forEach要终止循环需要通过try catch。。。于是发现some是提前终止循环的。但是some也有个坑要提防，那就是some去遍历一个空数组，会返回false；</p>]]></content>
+        <content type="html"><![CDATA[<p> &emsp;&emsp;今天代码rv的时候，审核人说不能直接修改父组件传的值，我代码里写的是 data() {return {commonForm: form}},然后通过修改commonForm的值，最后提交的也是commonform。按照常理来说，我改变commonForm确实form也会改变，但是我想起来我写了不少代码都是这种操作，但是控制台也没有警告说我修改了父组件的值，此时我以为Vue中的data函数会对数据进行深拷贝。结果后面在父组件进行监听，当加上deep:true时，发现子组件的commonForm进行修改时，父组件也会被修改，但是当没有加上deep:true时，则监听不到，由此推断出控制台监听的那种是默认为deep:false的，这种情况下，只有改变this.form对象的地址，控制台才会报错。由于这种操作确实改变了父组件的值，违反了单向数据流，所以需要使用深拷贝！！<br> &emsp;&emsp;<br><img src="../img/$data.png" alt></p>]]></content>
       
       
       
@@ -108,11 +121,11 @@
     
     
     <entry>
-      <title>$set采坑记</title>
-      <link href="/2019/09/04/$set/"/>
-      <url>/2019/09/04/$set/</url>
+      <title>用DOMPurify处理传入给v-html内容</title>
+      <link href="/2019/09/04/v-html/"/>
+      <url>/2019/09/04/v-html/</url>
       
-        <content type="html"><![CDATA[<p> &emsp;&emsp;前几天做后台管理系统时，里面有一个涉及到对申请者的信息修改，对原来已经有的申请者，只能进行积分的修改或者是删除申请者，同时对新增申请者可以选择姓名、调整积分。由于新增申请者跟原有申请者的操作跟展示效果都不一样，所以在展示申请者的时候，我用tag这个字段来进行区分，最后把这个tag传给后台进行数据处理。新增的obj在推入时就会一并添加一个tag属性，且其值为”add”，删除的是直接使用index对数组中某一项新增tag属性，且其值为delete。展示层对于tag值为delete的则不展示，由于tag这个属性是新增的，所以需要使用$set，否则视图层不会响应。在我添加$set之后，我发现了另外一个诡异的问题，就是在点击删除之后，后面新增的obj都不再展示。此时我打印数据，发现数据是正常的，就是被删除的obj的tag是delete，而之前新增的tag还是add，那为什么会不展示了呢？？这个问题我到现在也没搞懂，但是这个问题只有两种可能，一种是我的展示逻辑写的有问题，另一种就是vue有bug。等我去理解$set的源码或许会得到解答。<br> &emsp;&emsp;最后同事小赵提出了一种解决方案，在获取到申请者数据时，用$set循环为每一个obj添加tag属性，且该值置为空。然后后台有变动的时候，在直接修改tag属性。果然用这种方法之后，视图就正常显示了。但是我还是没搞懂这样子能解决问题的理由。。。等我找到答案时再回来更新，未完待续</p>]]></content>
+        <content type="html"><![CDATA[<p> &emsp;&emsp;昨天提交代码的时候，同事审核到代码里面用到v-html，要求需对后台传入内容进行转义，否则可能会有安全性问题，比如后台现在传给你的内容是依赖用户输入的，假设后台直接把那段文本传到前端，那么就容易发生xss攻击。假如用户传的是一段scrpit代码，就用可能直接导致网页瘫痪。当时我直接调用了转义函数，结果发现标签被当成文本输出了，所以我知道了所谓转义应该是指的过滤，把非法的输入给过滤。此时DOMPurify就派上用场了。<br> &emsp;&emsp;DOMPurify使用：一、引入这个库 二、可以直接定义一个全局配置常量 三、调用DOMPurify.sanitize函数对要传入给v-html的内容进行处理。e.g v-html=”DOMPurify.sanitize(itemData.value, DOMPURIFY_CONFIG)”</p><p> 全局配置参考如下：</p><p>DOMPURIFY_CONFIG = {<br> &emsp;&emsp; USE_PROFILES: {html: true},  //允许所有安全的HTML元素，但不允许SVG或MathML<br> &emsp;&emsp; ALLOWED_ATTR: [‘style’],     //允许html元素上的style属性<br> &emsp;&emsp; WHOLE_DOCUMENT: true         //返回整个文档，包括<html>标签，为false则只返回body内（不包括body）的内容，设置为true是t为了拿到<br> &emsp;&emsp; style标签<br>};</html></p>]]></content>
       
       
       
@@ -121,11 +134,11 @@
     
     
     <entry>
-      <title>用DOMPurify处理传入给v-html内容</title>
-      <link href="/2019/09/04/v-html/"/>
-      <url>/2019/09/04/v-html/</url>
+      <title>$set采坑记</title>
+      <link href="/2019/09/04/$set/"/>
+      <url>/2019/09/04/$set/</url>
       
-        <content type="html"><![CDATA[<p> &emsp;&emsp;昨天提交代码的时候，同事审核到代码里面用到v-html，要求需对后台传入内容进行转义，否则可能会有安全性问题，比如后台现在传给你的内容是依赖用户输入的，假设后台直接把那段文本传到前端，那么就容易发生xss攻击。假如用户传的是一段scrpit代码，就用可能直接导致网页瘫痪。当时我直接调用了转义函数，结果发现标签被当成文本输出了，所以我知道了所谓转义应该是指的过滤，把非法的输入给过滤。此时DOMPurify就派上用场了。<br> &emsp;&emsp;DOMPurify使用：一、引入这个库 二、可以直接定义一个全局配置常量 三、调用DOMPurify.sanitize函数对要传入给v-html的内容进行处理。e.g v-html=”DOMPurify.sanitize(itemData.value, DOMPURIFY_CONFIG)”</p><p> 全局配置参考如下：</p><p>DOMPURIFY_CONFIG = {<br> &emsp;&emsp; USE_PROFILES: {html: true},  //允许所有安全的HTML元素，但不允许SVG或MathML<br> &emsp;&emsp; ALLOWED_ATTR: [‘style’],     //允许html元素上的style属性<br> &emsp;&emsp; WHOLE_DOCUMENT: true         //返回整个文档，包括<html>标签，为false则只返回body内（不包括body）的内容，设置为true是t为了拿到<br> &emsp;&emsp; style标签<br>};</html></p>]]></content>
+        <content type="html"><![CDATA[<p> &emsp;&emsp;前几天做后台管理系统时，里面有一个涉及到对申请者的信息修改，对原来已经有的申请者，只能进行积分的修改或者是删除申请者，同时对新增申请者可以选择姓名、调整积分。由于新增申请者跟原有申请者的操作跟展示效果都不一样，所以在展示申请者的时候，我用tag这个字段来进行区分，最后把这个tag传给后台进行数据处理。新增的obj在推入时就会一并添加一个tag属性，且其值为”add”，删除的是直接使用index对数组中某一项新增tag属性，且其值为delete。展示层对于tag值为delete的则不展示，由于tag这个属性是新增的，所以需要使用$set，否则视图层不会响应。在我添加$set之后，我发现了另外一个诡异的问题，就是在点击删除之后，后面新增的obj都不再展示。此时我打印数据，发现数据是正常的，就是被删除的obj的tag是delete，而之前新增的tag还是add，那为什么会不展示了呢？？这个问题我到现在也没搞懂，但是这个问题只有两种可能，一种是我的展示逻辑写的有问题，另一种就是vue有bug。等我去理解$set的源码或许会得到解答。<br> &emsp;&emsp;最后同事小赵提出了一种解决方案，在获取到申请者数据时，用$set循环为每一个obj添加tag属性，且该值置为空。然后后台有变动的时候，在直接修改tag属性。果然用这种方法之后，视图就正常显示了。但是我还是没搞懂这样子能解决问题的理由。。。等我找到答案时再回来更新，未完待续</p>]]></content>
       
       
       

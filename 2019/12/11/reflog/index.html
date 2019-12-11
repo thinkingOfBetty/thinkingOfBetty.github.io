@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>
-    Hello World |
+    用reflog拯救reset --hard造成的文件丢失 |
     
     Hexo</title>
   
@@ -23,7 +23,7 @@
 <body>
 <main class="content">
   <section class="outer">
-  <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  <article id="post-reflog" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
     
@@ -31,7 +31,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Hello World
+      用reflog拯救reset --hard造成的文件丢失
     </h1>
   
   
@@ -44,8 +44,8 @@
 
     
       <div class="article-meta">
-        <a href="/2019/08/02/hello-world/" class="article-date">
-  <time datetime="2019-08-01T16:00:00.000Z" itemprop="datePublished">2019-08-02</time>
+        <a href="/2019/12/11/reflog/" class="article-date">
+  <time datetime="2019-12-10T16:00:00.000Z" itemprop="datePublished">2019-12-11</time>
 </a>
         
       </div>
@@ -57,24 +57,13 @@
       
 
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <p>&emsp;&emsp;依旧记得之前的一次reset –hard给我造成的心理阴影，要是早点get到这个点，或许当初会少些焦虑。<br>接下来还原一下reset –hard之后的场景以及记录下修复时需要用到什么指令。</p>
+<p>首先用git log查看当前的commit记录<br><img src="../img/reflog/1.PNG" alt><br>然后用git reset –hard来强制回退commit，此时再用git log查看了之前的reflog的提交记录已经不见了<br><img src="../img/reflog/2.PNG" alt><br>此时如果要重新找回reflog的commit，需要用git reflog查看你在git上进行的每一步操作，然后找到之前的reflog的hash，再用git reset –hard 回退到丢失的commit。<font color="red">此时如果后面有新的commit，可以结合git cherry-pick来使用</font><br><img src="../img/reflog/3.PNG" alt><br>此时查看commit已经成功拾回。<br><img src="../img/reflog/4.PNG" alt></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/02/hello-world/" data-id="ck40xr43q0003lgfvtneummr2"
+      <a data-url="http://yoursite.com/2019/12/11/reflog/" data-id="ck40xr44k000glgfvkg9s6ofh"
          class="article-share-link">Share</a>
       
     </footer>
@@ -85,19 +74,10 @@
     
   <nav class="article-nav">
     
-      <a href="/2019/08/03/quarter-select-code-opt/" class="article-nav-link">
-        <strong class="article-nav-caption">Newer posts</strong>
-        <div class="article-nav-title">
-          
-            季度下拉框代码优化
-          
-        </div>
-      </a>
     
-    
-      <a href="/2019/07/31/new-hexo/" class="article-nav-link">
+      <a href="/2019/12/04/hot/" class="article-nav-link">
         <strong class="article-nav-caption">Olde posts</strong>
-        <div class="article-nav-title">hexo 采坑记</div>
+        <div class="article-nav-title">理解热更新原理</div>
       </a>
     
   </nav>
