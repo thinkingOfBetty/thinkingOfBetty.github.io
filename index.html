@@ -57,6 +57,92 @@
 
     
       
+        <article id="post-router-control" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/01/07/router-control/">路由控制权限控制</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/01/07/router-control/" class="article-date">
+  <time datetime="2020-01-06T16:00:00.000Z" itemprop="datePublished">2020-01-07</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;工单的权限控制中前端的控制分为两部分，一部分是导航栏中的入口，另一部分是隐藏注册的路由（防止用户记住路由后直接输入路径去获取资源）。工单项目中路由的隐藏主要是通过路由表的配置  + 递归处理路由表 + ROUTER.addRoutes（处理完的路由数组）来实现的。<br>&emsp;&emsp;一、目前项目权限如下所示</p>
+<table>
+<thead>
+<tr>
+<th>专家类型</th>
+<th>菜单权限</th>
+<th>读写权限</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>T1,T2,T3</td>
+<td>除了xx管理，xx设置，其它全有</td>
+<td>有所有权限</td>
+<td>可查看所有客户的信息，只能查看分配给自己的工单</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>所有权限</td>
+<td>所有权限</td>
+<td>-</td>
+</tr>
+<tr>
+<td>渠道</td>
+<td>只有工单管理（不包括xx），客户管理（不包括xx）</td>
+<td>工单只有查看权限</td>
+<td>只能查看自己所属渠道的客户和所属渠道客户的工单</td>
+</tr>
+</tbody></table>
+<p>由于这个项目的隐藏需求都是对某个用户开放大的模块，然后再关闭里面小模块的权限，或者是关闭整个大模块的权限，所以我目前采取的配置是，在一级模块可以在meta中配置允许访问的roles，然后在子级模块中配置觉得一级模块中放通权限，但是在二级或者是三级模块中关闭某个用户的权限的即可以配置forbidenRoles。（这种配置方式比较适用于一级二级、三级路由有写成那种父子级的路由配置表）</p>
+<p>&emsp;&emsp;二、首先用使用同步请求获取用户权限信息，然后用filter筛选出当前用户允许访问的一级路由，然后递归删除（此处的删除依旧是用的filter）子路由中不让当前用户访问的子路由。</p>
+<p>&emsp;&emsp;三、递归删除的方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deleteForbiddenRoutes</span> (<span class="params">routerObj, role</span>) </span>&#123;  <span class="comment">//删除不允许被当前角色访问的路由</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">get</span>(routerObj, 'meta.forbiddenRoles', []).includes(role)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(routerObj.children)) &#123;</span><br><span class="line">        <span class="keyword">const</span> ROUTES_ARR = routerObj.children;</span><br><span class="line">        <span class="keyword">let</span>  filteredArr = ROUTES_ARR.filter(<span class="function"><span class="params">item</span> =&gt;</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> !<span class="keyword">get</span>(item, 'meta.forbiddenRoles', []).includes(role);</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">        filteredArr.forEach((item, index) =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(item.children)) &#123;</span><br><span class="line">                filteredArr[index].children = delChildForbiddenRoutes(item, role);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        routerObj.children = filteredArr;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> routerObj;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">delChildForbiddenRoutes</span> (<span class="params">item, role</span>) </span>&#123; <span class="comment">//递归删除不允许被当前角色访问的路由</span></span><br><span class="line">    <span class="keyword">let</span> arr = [];</span><br><span class="line"></span><br><span class="line">    arr = item.children.filter(<span class="function">(<span class="params">childItem</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> deleteForbiddenRoutes(childItem, role);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> arr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/01/07/router-control/" data-id="ck40xr44i000flgfvuygpjzf1"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-canceled" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -591,68 +677,13 @@
 
 
       
-        <article id="post-deal-undefined" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/09/09/deal-undefined/">字段值可能为undefined的处理</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/09/09/deal-undefined/" class="article-date">
-  <time datetime="2019-09-08T16:00:00.000Z" itemprop="datePublished">2019-09-09</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p> &emsp;&emsp;前几天在写代码，后端传一个code值给前端，前端根据常量表决定展示的文案以及字体颜色，当code为-1时，不展示内容。因为后台有做不展示的处理，所以我误以为该字段是必定会返回的。后面出现bug才知道该字段是在某种特定类型的工单才会进行返回。于是我在页面渲染的时候用v-if=”data.code &amp;&amp; data.code !== -1”去进行判断，此时问题又来了。此前约定的code里面包含了0，而0也是要展示的，如果用这种方式进行判断，则code为0时这里的v-if的结果为false。所以之后开发应当明确两点，最大可能地避免bug。<br> &emsp;&emsp;一、明确字段是否返回，尽可能地处理字段为undifined的情况<br> &emsp;&emsp;二、处理字段为undifined时，分情况，如果该字段是一个object类型的，用loadash中的get进行处理（此处要注意loadash的按需引入方法）；如果该字段是某个对象的属性，可以用obj.hasOwnProperty进行判断，而不是用data.code &amp;&amp; xxx 去进行判断，因为这里的code可能为0或者是空字符串。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/09/deal-undefined/" data-id="ck40xr43o0002lgfvde5dhjp9"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
   </article>
   
 
   
     <nav class="page-nav">
       
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next page</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next page</a>
     </nav>
   
 </section>
@@ -670,7 +701,7 @@
 </ul>
     </div>
     <ul class="list-inline">
-      <li>&copy; 2019 Hexo</li>
+      <li>&copy; 2020 Hexo</li>
       <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
       <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
     </ul>
