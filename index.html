@@ -57,6 +57,63 @@
 
     
       
+        <article id="post-provisional-headers-are-shown" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/01/09/provisional-headers-are-shown/">provisional headers are shown</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/01/09/provisional-headers-are-shown/" class="article-date">
+  <time datetime="2020-01-08T16:00:00.000Z" itemprop="datePublished">2020-01-09</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>采坑记录：本地开发调用接口时显示请求头显示provisional headers are shown ；</p>
+<p>原因是浏览器证书报错：NET::ERR_CERT_AUTHORITY_INVALID，导致请求被拦截；</p>
+<p>解决办法：在chrome://flags/#allow-insecure-localhost中enabled #</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/01/09/provisional-headers-are-shown/" data-id="ck5649z7q000014fvw89id5ix"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-router-control" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -552,61 +609,6 @@
     </div>
     <footer class="article-footer">
       <a data-url="http://yoursite.com/2019/09/29/location/" data-id="ck40xr444000algfvfjqkzxsx"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-forEach" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/09/21/forEach/">forEach不能采用break或者returen false终止循环</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/09/21/forEach/" class="article-date">
-  <time datetime="2019-09-20T16:00:00.000Z" itemprop="datePublished">2019-09-21</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p> &emsp;&emsp;前几天写PPT项目代码的时候，想要找到符合条件的一项，就跳出循环，不要继续循环，结果我用了break发现没用，查了一下原来forEach要终止循环需要通过try catch。。。于是发现some是提前终止循环的。但是some也有个坑要提防，那就是some去遍历一个空数组，会返回false；</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/21/forEach/" data-id="ck40xr43t0004lgfv6lejwgco"
          class="article-share-link">Share</a>
       
     </footer>
