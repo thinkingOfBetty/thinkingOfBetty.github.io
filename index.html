@@ -57,6 +57,63 @@
 
     
       
+        <article id="post-IE-Cache" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/02/23/IE-Cache/">IE缓存策略带来的问题</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/02/23/IE-Cache/" class="article-date">
+  <time datetime="2020-02-22T16:00:00.000Z" itemprop="datePublished">2020-02-23</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;今天测试在ie11中发现新工单中提交到下一环节后，上一个环节还是原来的样子。因为这一块涉及了好几个接口，然后业务逻辑又比较复杂，同时因为谷歌下是正常的，所以我一开始就排除了是数据的问题，这让我几乎浪费了一天。。。<br>&emsp;&emsp;请教同事后才发现原来<font color="red">IE对同一个get请求，如果请求的参数是没有发生变化的话，默认会用缓存（尽管此时浏览器请求的接口是返回200而不是304）</font>，（同时我发现如果打开调试工具，则默认会勾选 从服务器读取最新数据，但是如果没打开调试工具，则是按照上面说的缓存策略执行）最后在请求中加上如下代码即可解决：<br>&emsp;&emsp;xhr.setRequestHeader(‘Cache-Control’,’no-cache’);<br>&emsp;&emsp;xhr.setRequestHeader(‘Pragma’,’no-cache’);</p>
+<p>&emsp;&emsp;其实有另外一种方法就是在请求后加一个时间戳，但是这种方式使得缓存不可用，而且这样可能需要在好几个特定的请求中去写一些额外的代码。</p>
+<p>&emsp;&emsp;感觉IE真是不好惹，但是下次排查这种还是得从接口去入手，如果觉得接口不熟悉，可以先询问对这块比较熟悉的人，这样可以大大提高效率。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/02/23/IE-Cache/" data-id="ck6z3651u0000f8uro4iv7c4v"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-provisional-headers-are-shown" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -98,7 +155,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/01/09/provisional-headers-are-shown/" data-id="ck5649z7q000014fvw89id5ix"
+      <a data-url="http://yoursite.com/2020/01/09/provisional-headers-are-shown/" data-id="ck6z2ivgg000bkgurnb7bxy7q"
          class="article-share-link">Share</a>
       
     </footer>
@@ -184,7 +241,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/01/07/router-control/" data-id="ck40xr44i000flgfvuygpjzf1"
+      <a data-url="http://yoursite.com/2020/01/07/router-control/" data-id="cjz5bxq5m0004oourkizi3g2y"
          class="article-share-link">Share</a>
       
     </footer>
@@ -244,7 +301,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/13/canceled/" data-id="ck43lftoe000018fv2d7pdgnv"
+      <a data-url="http://yoursite.com/2019/12/13/canceled/" data-id="ck6z2ivg10003kgurqzhdazse"
          class="article-share-link">Share</a>
       
     </footer>
@@ -300,7 +357,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/11/reflog/" data-id="ck40xr44k000glgfvkg9s6ofh"
+      <a data-url="http://yoursite.com/2019/12/11/reflog/" data-id="ck6z2ivgw000dkgursci4r22y"
          class="article-share-link">Share</a>
       
     </footer>
@@ -356,7 +413,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/04/hot/" data-id="ck40xr43v0005lgfvf1vzqt15"
+      <a data-url="http://yoursite.com/2019/12/04/hot/" data-id="ck6z2ivg10007kgur6q14ohh9"
          class="article-share-link">Share</a>
       
     </footer>
@@ -437,7 +494,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/11/28/button-load/" data-id="ck40xr4410008lgfv2m8d6qu5"
+      <a data-url="http://yoursite.com/2019/11/28/button-load/" data-id="ck6z2ivg10002kguru75w0nds"
          class="article-share-link">Share</a>
       
     </footer>
@@ -492,7 +549,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/11/27/window-open/" data-id="ck40xr44o000ilgfv8aggvwuo"
+      <a data-url="http://yoursite.com/2019/11/27/window-open/" data-id="ck6z2ivgw000fkgurpzxqsdsa"
          class="article-share-link">Share</a>
       
     </footer>
@@ -550,7 +607,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/11/27/polling/" data-id="ck40xr44e000dlgfve5yquv0q"
+      <a data-url="http://yoursite.com/2019/11/27/polling/" data-id="ck6z2ivgg000akgurrkgcwcnd"
          class="article-share-link">Share</a>
       
     </footer>
@@ -608,62 +665,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/29/location/" data-id="ck40xr444000algfvfjqkzxsx"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-$data" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/09/21/$data/">Vue中的data函数不会对数据进行深拷贝</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/09/21/$data/" class="article-date">
-  <time datetime="2019-09-20T16:00:00.000Z" itemprop="datePublished">2019-09-21</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p> &emsp;&emsp;今天代码rv的时候，审核人说不能直接修改父组件传的值，我代码里写的是 data() {return {commonForm: form}},然后通过修改commonForm的值，最后提交的也是commonform。按照常理来说，我改变commonForm确实form也会改变，但是我想起来我写了不少代码都是这种操作，但是控制台也没有警告说我修改了父组件的值，此时我以为Vue中的data函数会对数据进行深拷贝。结果后面在父组件进行监听，当加上deep:true时，发现子组件的commonForm进行修改时，父组件也会被修改，但是当没有加上deep:true时，则监听不到，由此推断出控制台监听的那种是默认为deep:false的，这种情况下，只有改变this.form对象的地址，控制台才会报错。由于这种操作确实改变了父组件的值，违反了单向数据流，所以需要使用深拷贝！！<br> &emsp;&emsp;<br><img src="../img/$data.png" alt></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/21/$data/" data-id="ck40xr42i0000lgfvui47nv0y"
+      <a data-url="http://yoursite.com/2019/09/29/location/" data-id="ck6z2ivgg0008kgur6dytdijz"
          class="article-share-link">Share</a>
       
     </footer>
@@ -696,9 +698,9 @@
     <div class="float-right">
       <ul class="list-inline">
   
-    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+    <li><i class="fe fe-bar-chart"></i> <span id="busuanzi_value_site_pv"></span></li>
   
-    <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
   
 </ul>
     </div>
@@ -780,6 +782,8 @@
   <script src="/fancybox/jquery.fancybox.min.js"></script>
 
 
+
+  <script src="/js/search.js"></script>
 
 
 <script src="/js/ocean.js"></script>

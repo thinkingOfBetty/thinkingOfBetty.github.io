@@ -57,6 +57,61 @@
 
     
       
+        <article id="post-$data" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/09/21/$data/">Vue中的data函数不会对数据进行深拷贝</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/09/21/$data/" class="article-date">
+  <time datetime="2019-09-20T16:00:00.000Z" itemprop="datePublished">2019-09-21</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p> &emsp;&emsp;今天代码rv的时候，审核人说不能直接修改父组件传的值，我代码里写的是 data() {return {commonForm: form}},然后通过修改commonForm的值，最后提交的也是commonform。按照常理来说，我改变commonForm确实form也会改变，但是我想起来我写了不少代码都是这种操作，但是控制台也没有警告说我修改了父组件的值，此时我以为Vue中的data函数会对数据进行深拷贝。结果后面在父组件进行监听，当加上deep:true时，发现子组件的commonForm进行修改时，父组件也会被修改，但是当没有加上deep:true时，则监听不到，由此推断出控制台监听的那种是默认为deep:false的，这种情况下，只有改变this.form对象的地址，控制台才会报错。由于这种操作确实改变了父组件的值，违反了单向数据流，所以需要使用深拷贝！！<br> &emsp;&emsp;<br><img src="../img/$data.png" alt></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/09/21/$data/" data-id="ck6z2ivfl0000kgurbuhocc8v"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-forEach" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -96,7 +151,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/21/forEach/" data-id="ck40xr43t0004lgfv6lejwgco"
+      <a data-url="http://yoursite.com/2019/09/21/forEach/" data-id="ck6z2ivg10005kgurleu56iob"
          class="article-share-link">Share</a>
       
     </footer>
@@ -151,7 +206,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/09/deal-undefined/" data-id="ck40xr43o0002lgfvde5dhjp9"
+      <a data-url="http://yoursite.com/2019/09/09/deal-undefined/" data-id="ck6z2ivg10004kgurfd1bnmu2"
          class="article-share-link">Share</a>
       
     </footer>
@@ -206,7 +261,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/04/$set/" data-id="ck40xr43k0001lgfvz4s8b8o1"
+      <a data-url="http://yoursite.com/2019/09/04/$set/" data-id="ck6z2ivfl0001kgur5mpot2h8"
          class="article-share-link">Share</a>
       
     </footer>
@@ -263,7 +318,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/04/v-html/" data-id="ck40xr44m000hlgfvp0zcfzs0"
+      <a data-url="http://yoursite.com/2019/09/04/v-html/" data-id="ck6z2ivgw000ekgurxa0mvtui"
          class="article-share-link">Share</a>
       
     </footer>
@@ -319,7 +374,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/19/loadingChunkFailed/" data-id="ck40xr43z0007lgfvls1gbyhc"
+      <a data-url="http://yoursite.com/2019/08/19/loadingChunkFailed/" data-id="ck6z2ivgg0009kgurf7rp7446"
          class="article-share-link">Share</a>
       
     </footer>
@@ -375,7 +430,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/13/learn-session/" data-id="ck40xr43x0006lgfv33h3ihjm"
+      <a data-url="http://yoursite.com/2019/08/13/learn-session/" data-id="ck6z2ivg10006kgurlib1a3pl"
          class="article-share-link">Share</a>
       
     </footer>
@@ -435,7 +490,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/11/router-control-bug/" data-id="ck53x3prj000078fvkyyh4uyk"
+      <a data-url="http://yoursite.com/2019/08/11/router-control-bug/" data-id="ck6z2ivgw000ckgurji2sfn3v"
          class="article-share-link">Share</a>
       
     </footer>
@@ -494,7 +549,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/06/one-code-include-two-project/" data-id="ck40xr449000clgfvqhxqanxq"
+      <a data-url="http://yoursite.com/2019/08/06/one-code-include-two-project/" data-id="cjz5bxq5c0002oouryccogx8i"
          class="article-share-link">Share</a>
       
     </footer>
@@ -553,64 +608,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/04/login-problem/" data-id="ck40xr4420009lgfvl39zjtu7"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-quarter-select-code-opt" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/08/03/quarter-select-code-opt/">季度下拉框代码优化</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/08/03/quarter-select-code-opt/" class="article-date">
-  <time datetime="2019-08-02T16:00:00.000Z" itemprop="datePublished">2019-08-03</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p>&emsp;&emsp;结论：对比以上两种，最大的不同其实是思考逻辑。在思考这个内容的起初，我就给自己限定了思考的范围，就是我是从固定数量的季度数开始思考，然后就发现季度是要减去固定的数量才得出的，以致于写出冗长的代码。慢吃是一开始就认定这种是可以做成配置项的，所以思考的入口就很不一样，后面产出的东西就不一样。</p>
-<p>在做这种通用性比较强的内容，一定要一开始就往可配置的方向去思考，否则可能就是做很多无用功，走很多的弯路。</p>
-<p>优化之后的代码</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">getCurrentQuarter</span></span> () &#123;                                  //计算当前在哪个季度 </span><br><span class="line">    const MONTH = new Date().getMonth() + 1,            //用getMonth获取的月份比实际月份少一个月</span><br><span class="line">            CURRENTQUARTER = QUARTERS_OBJ[MONTH];</span><br><span class="line">            </span><br><span class="line">    <span class="built_in">return</span> CURRENTQUARTER;</span><br><span class="line"></span><br><span class="line">&#125;,</span><br><span class="line"></span><br><span class="line"> /**</span><br><span class="line"> * 将某个年份的指定季度推进指定数组里，如果order是<span class="literal">true</span>，则是取的指定年份的靠前的年份，反之是取的是靠后的年份</span><br><span class="line"> * @param &#123;String&#125; current //年份跟季度的组合 形如2019-02 </span><br><span class="line"> * @param &#123;Number&#125; beforeNum  //需要显示的季度数，不包括当前季度</span><br><span class="line"> * @<span class="built_in">return</span> &#123;Array&#125; </span><br><span class="line"> */</span><br><span class="line">getBeforeCurrentQuarter (current, beforeNum) &#123;</span><br><span class="line">    <span class="built_in">let</span> season = [<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>, <span class="string">'4'</span>],</span><br><span class="line">        len = season.length,</span><br><span class="line">        [year, quarter] = current.split(<span class="string">'-'</span>),</span><br><span class="line">        index = season.findIndex((item) =&gt; item === quarter),</span><br><span class="line">        arr = [],</span><br><span class="line">        loopIndex = index - 1;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">let</span> i = 0; i &lt; beforeNum; i++) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (loopIndex &lt; 0) &#123;</span><br><span class="line">            year--;</span><br><span class="line">            loopIndex = len - 1;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        arr.push(this.handleYearAndQuarter(year, season[loopIndex]));</span><br><span class="line">        loopIndex--;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> arr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/03/quarter-select-code-opt/" data-id="ck40xr44g000elgfv2freifgb"
+      <a data-url="http://yoursite.com/2019/08/04/login-problem/" data-id="cjz5bxq4m0000oourdz8ad0gy"
          class="article-share-link">Share</a>
       
     </footer>
@@ -643,9 +641,9 @@
     <div class="float-right">
       <ul class="list-inline">
   
-    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+    <li><i class="fe fe-bar-chart"></i> <span id="busuanzi_value_site_pv"></span></li>
   
-    <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
   
 </ul>
     </div>
@@ -727,6 +725,8 @@
   <script src="/fancybox/jquery.fancybox.min.js"></script>
 
 
+
+  <script src="/js/search.js"></script>
 
 
 <script src="/js/ocean.js"></script>
