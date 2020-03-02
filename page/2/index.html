@@ -57,7 +57,7 @@
 
     
       
-        <article id="post-$data" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+        <article id="post-polling" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
     
@@ -65,7 +65,7 @@
         
   
     <h2 itemprop="name">
-      <a class="article-title" href="/2019/09/21/$data/">Vue中的data函数不会对数据进行深拷贝</a>
+      <a class="article-title" href="/2019/11/27/polling/">前端不要轻易轮询</a>
     </h2>
   
   
@@ -78,8 +78,8 @@
 
     
       <div class="article-meta">
-        <a href="/2019/09/21/$data/" class="article-date">
-  <time datetime="2019-09-20T16:00:00.000Z" itemprop="datePublished">2019-09-21</time>
+        <a href="/2019/11/27/polling/" class="article-date">
+  <time datetime="2019-11-26T16:00:00.000Z" itemprop="datePublished">2019-11-27</time>
 </a>
         
       </div>
@@ -91,12 +91,73 @@
       
 
       
-        <p> &emsp;&emsp;今天代码rv的时候，审核人说不能直接修改父组件传的值，我代码里写的是 data() {return {commonForm: form}},然后通过修改commonForm的值，最后提交的也是commonform。按照常理来说，我改变commonForm确实form也会改变，但是我想起来我写了不少代码都是这种操作，但是控制台也没有警告说我修改了父组件的值，此时我以为Vue中的data函数会对数据进行深拷贝。结果后面在父组件进行监听，当加上deep:true时，发现子组件的commonForm进行修改时，父组件也会被修改，但是当没有加上deep:true时，则监听不到，由此推断出控制台监听的那种是默认为deep:false的，这种情况下，只有改变this.form对象的地址，控制台才会报错。由于这种操作确实改变了父组件的值，违反了单向数据流，所以需要使用深拷贝！！<br> &emsp;&emsp;<br><img src="../img/$data.png" alt></p>
+        <p>&emsp;&emsp;如非必要，尽量不要轻易轮询。盲目地用轮询往往会增加工作量、给服务器造成负担、没有实现实际功能。这里阐述下几种本来需要前端轮询、后面变成后端控制的场景。</p>
+<p>&emsp;&emsp;一、后端操作有延迟、比如需要社保苏醒时间等<br>&emsp;&emsp;执行某种编辑操作之后，前端在成功回调中刷新页面，结果数据不刷新。后端有某些操作是会延迟1~3秒才能真正地生效，这种情况，不要轮询、不要前端去瞎setTimeout,而是要让后端在操作真正完成之前将接口处于挂起（pending状态）。这样子才能将页面刷新的时间缩短至最小。</p>
+<p>&emsp;&emsp;二、后端也去轮询查询<br>&emsp;&emsp;场景：后端去轮询某个接口，最长时间不超过一分钟（其实一般如果请求封装的时候有设置超时时间，可能需要考虑轮询，或者看看能不能将请求的超时时间改成可配置，默认是设置的时间，但是可以针对特定接口进行修改）。如果项目没有设置或者设置的超时时间比后端（后端去轮询一般也有设置超时时间）的要长，那么应当让后端将接口挂起，而不是轮询。</p>
+<p>&emsp;&emsp;三、业务需求：实时更新服务截止日期。<br>&emsp;&emsp;这种轮询需要明确是否有必要，像我们的webui项目的token过期时间就是半小时，这种一般重新登录之后，会自己重新去请求服务是否过期的接口，可以不再轮询。这种情况，如果要轮询，需要尽量减少轮询的时间，比如距离服务过期还剩下一天才开始轮询或者是其他方法</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/21/$data/" data-id="ck6z2ivfl0000kgurbuhocc8v"
+      <a data-url="http://yoursite.com/2019/11/27/polling/" data-id="ck40xr44e000dlgfve5yquv0q"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        <article id="post-location" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/09/29/location/">var location = window.location引发的坑</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/09/29/location/" class="article-date">
+  <time datetime="2019-09-28T16:00:00.000Z" itemprop="datePublished">2019-09-29</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;之前项目修改了一个东西，就是将之前的login_url由指定的字符串改成了动态的ip，在使用了location去保存window.location之后，使得网页每次加载时都一直疯狂地请求资源，感觉是陷入了循环。这个bug我找了几个小时都没找到。当时是有发现当login_url后面加一些会报错的符号时，页面能正常加载，所以就把错误定位在了url上，可是后面一直把错误定位在后端对请求的转发造成没成功请求到资源的问题，现在仔细想，当时定位bug的思路是有很大问题的。</p>
+<p>&emsp;&emsp;首先，我应该意识到有代码造成了循环——因为查看了网络资源确实不断地在加载。其次，我应该意识到login_url的拼写错误或者是资源定位错误都不可能会有不断加载资源的问题。所以之后想问题纯粹点，别想那些让人感觉困惑的点。如果一开始就想到循环的问题，或许能早点解决问题。</p>
+<p>&emsp;&emsp;最后的还需要学习的就是不要用关键字作为变量名——js关键字包括，这次var location其实指代的就是window.location，如果我有在控制台进行尝试，应该是可以非常快速的发现问题的，尽管这个代码不会报错，但是在控制台造成的问题确可以让我很快地意识到问题在哪里。</p>
+<p>&emsp;&emsp;附上一个有保留关键字的<a href="https://www.jianshu.com/p/3c2cfcc2d227" target="_blank" rel="noopener">链接</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/09/29/location/" data-id="ck40xr444000algfvfjqkzxsx"
          class="article-share-link">Share</a>
       
     </footer>
@@ -151,7 +212,62 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/21/forEach/" data-id="ck6z2ivg10005kgurleu56iob"
+      <a data-url="http://yoursite.com/2019/09/21/forEach/" data-id="ck40xr43t0004lgfv6lejwgco"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        <article id="post-$data" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/09/21/$data/">Vue中的data函数不会对数据进行深拷贝</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/09/21/$data/" class="article-date">
+  <time datetime="2019-09-20T16:00:00.000Z" itemprop="datePublished">2019-09-21</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p> &emsp;&emsp;今天代码rv的时候，审核人说不能直接修改父组件传的值，我代码里写的是 data() {return {commonForm: form}},然后通过修改commonForm的值，最后提交的也是commonform。按照常理来说，我改变commonForm确实form也会改变，但是我想起来我写了不少代码都是这种操作，但是控制台也没有警告说我修改了父组件的值，此时我以为Vue中的data函数会对数据进行深拷贝。结果后面在父组件进行监听，当加上deep:true时，发现子组件的commonForm进行修改时，父组件也会被修改，但是当没有加上deep:true时，则监听不到，由此推断出控制台监听的那种是默认为deep:false的，这种情况下，只有改变this.form对象的地址，控制台才会报错。由于这种操作确实改变了父组件的值，违反了单向数据流，所以需要使用深拷贝！！<br> &emsp;&emsp;<br><img src="../img/$data.png" alt></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/09/21/$data/" data-id="ck40xr42i0000lgfvui47nv0y"
          class="article-share-link">Share</a>
       
     </footer>
@@ -206,62 +322,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/09/deal-undefined/" data-id="ck6z2ivg10004kgurfd1bnmu2"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-$set" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/09/04/$set/">$set采坑记</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/09/04/$set/" class="article-date">
-  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">2019-09-04</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p> &emsp;&emsp;前几天做后台管理系统时，里面有一个涉及到对申请者的信息修改，对原来已经有的申请者，只能进行积分的修改或者是删除申请者，同时对新增申请者可以选择姓名、调整积分。由于新增申请者跟原有申请者的操作跟展示效果都不一样，所以在展示申请者的时候，我用tag这个字段来进行区分，最后把这个tag传给后台进行数据处理。新增的obj在推入时就会一并添加一个tag属性，且其值为”add”，删除的是直接使用index对数组中某一项新增tag属性，且其值为delete。展示层对于tag值为delete的则不展示，由于tag这个属性是新增的，所以需要使用$set，否则视图层不会响应。在我添加$set之后，我发现了另外一个诡异的问题，就是在点击删除之后，后面新增的obj都不再展示。此时我打印数据，发现数据是正常的，就是被删除的obj的tag是delete，而之前新增的tag还是add，那为什么会不展示了呢？？这个问题我到现在也没搞懂，但是这个问题只有两种可能，一种是我的展示逻辑写的有问题，另一种就是vue有bug。等我去理解$set的源码或许会得到解答。<br> &emsp;&emsp;最后同事小赵提出了一种解决方案，在获取到申请者数据时，用$set循环为每一个obj添加tag属性，且该值置为空。然后后台有变动的时候，在直接修改tag属性。果然用这种方法之后，视图就正常显示了。但是我还是没搞懂这样子能解决问题的理由。。。等我找到答案时再回来更新，未完待续</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/04/$set/" data-id="ck6z2ivfl0001kgur5mpot2h8"
+      <a data-url="http://yoursite.com/2019/09/09/deal-undefined/" data-id="ck40xr43o0002lgfvde5dhjp9"
          class="article-share-link">Share</a>
       
     </footer>
@@ -318,7 +379,62 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/04/v-html/" data-id="ck6z2ivgw000ekgurxa0mvtui"
+      <a data-url="http://yoursite.com/2019/09/04/v-html/" data-id="ck40xr44m000hlgfvp0zcfzs0"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        <article id="post-$set" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/09/04/$set/">$set采坑记</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/09/04/$set/" class="article-date">
+  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">2019-09-04</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p> &emsp;&emsp;前几天做后台管理系统时，里面有一个涉及到对申请者的信息修改，对原来已经有的申请者，只能进行积分的修改或者是删除申请者，同时对新增申请者可以选择姓名、调整积分。由于新增申请者跟原有申请者的操作跟展示效果都不一样，所以在展示申请者的时候，我用tag这个字段来进行区分，最后把这个tag传给后台进行数据处理。新增的obj在推入时就会一并添加一个tag属性，且其值为”add”，删除的是直接使用index对数组中某一项新增tag属性，且其值为delete。展示层对于tag值为delete的则不展示，由于tag这个属性是新增的，所以需要使用$set，否则视图层不会响应。在我添加$set之后，我发现了另外一个诡异的问题，就是在点击删除之后，后面新增的obj都不再展示。此时我打印数据，发现数据是正常的，就是被删除的obj的tag是delete，而之前新增的tag还是add，那为什么会不展示了呢？？这个问题我到现在也没搞懂，但是这个问题只有两种可能，一种是我的展示逻辑写的有问题，另一种就是vue有bug。等我去理解$set的源码或许会得到解答。<br> &emsp;&emsp;最后同事小赵提出了一种解决方案，在获取到申请者数据时，用$set循环为每一个obj添加tag属性，且该值置为空。然后后台有变动的时候，在直接修改tag属性。果然用这种方法之后，视图就正常显示了。但是我还是没搞懂这样子能解决问题的理由。。。等我找到答案时再回来更新，未完待续</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/09/04/$set/" data-id="ck40xr43k0001lgfvz4s8b8o1"
          class="article-share-link">Share</a>
       
     </footer>
@@ -374,7 +490,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/19/loadingChunkFailed/" data-id="ck6z2ivgg0009kgurf7rp7446"
+      <a data-url="http://yoursite.com/2019/08/19/loadingChunkFailed/" data-id="ck40xr43z0007lgfvls1gbyhc"
          class="article-share-link">Share</a>
       
     </footer>
@@ -430,7 +546,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/13/learn-session/" data-id="ck6z2ivg10006kgurlib1a3pl"
+      <a data-url="http://yoursite.com/2019/08/13/learn-session/" data-id="ck40xr43x0006lgfv33h3ihjm"
          class="article-share-link">Share</a>
       
     </footer>
@@ -490,125 +606,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/11/router-control-bug/" data-id="ck6z2ivgw000ckgurji2sfn3v"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-one-code-include-two-project" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/08/06/one-code-include-two-project/">同个项目合入两套代码（LSS&amp;&amp;VMS）</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/08/06/one-code-include-two-project/" class="article-date">
-  <time datetime="2019-08-05T16:00:00.000Z" itemprop="datePublished">2019-08-06</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p>&emsp;&emsp;(1)先要明确公共模块，在涉及到公共部分的时候，要先确认下需求，即确认另外的项目是否也需要同样的变动，如果不需要，则需要做兼容处理；<br>&emsp;&emsp;(2)然后确认下迭代的顺序跟时间（后面迭代的分支在转测前需要把另一个代码分支合入，在合入代码有冲突时，最好是两个项目的人同时决定留下的内容），如果出现合入代码时不明确迭代发布顺序的情况，那么极有可能发生改动内容丢失的情况。</p>
-<p>&emsp;&emsp;举个例子在LSS迭代四跟vms1.0.1的开发过程中，我负责LSS而小卓负责vms，由于我们两个没有对齐迭代的发布时间，导致他误认为LSS迭代四的发布时间比vms1.0.1的发布时间要早，所以他在vms1.0.1转测之前合入了迭代四的内容。</p>
-<p>&emsp;&emsp;但是在得知了迭代四原来是比1.0.1晚发布的(此时迭代四的分支还没转测，尚存在一些bug)，他进行了代码的回滚，但是这次代码回滚对后面我迭代四转测前合入vms分支时造成了影响，也就是我迭代四里面有些修改由于合入了vms1.0.1而丢失了，这是因为vms在进行代码回滚的时候进行了某些删除操作，而合并分支时选择了以vms分支的操作为准而导致的。所以如果一旦合错分支时，再次进行合入要小心比对之前回滚的代码。</p>
-<p>&emsp;&emsp;由于这次回滚是在git上直接点击还原的，相当于通过新的合并请求来还原（新的合并请求就相当于这次请求的内容都进行了更改），并不是真正意义上的还原，所以下次合入该分支时，会认为这次还原之后的分支的修改时间是比较靠后的，也就是会以此次还原的代码为准，如果这次还原是通过还原主分支，则不会发生这种事情。</p>
-<p>&emsp;&emsp;所以：如果代码合入了主分支之后，主分支后面又没有其他的合入时，要进行回滚可以考虑直接回滚主分支,回滚主分支的风险比较大。。特别是后面有新的合入。所以最好是合入其他迭代的分支之前先考虑好。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/06/one-code-include-two-project/" data-id="cjz5bxq5c0002oouryccogx8i"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-login-problem" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/08/04/login-problem/">登录问题排查</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/08/04/login-problem/" class="article-date">
-  <time datetime="2019-08-03T16:00:00.000Z" itemprop="datePublished">2019-08-04</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p>登录失败问题原因：<br>前端和后端联调时，后台加了一个http配置参数，导致前端cookie校验错误；</p>
-<p>登录问题：登录时遇到接口返回“the csrf session token is missing”；</p>
-<p>&emsp;&emsp;在后端同事一直没有定位到问题所在时，我自己尝试帮忙排查问题。一开始看到session token is missing的时候，我是觉得可能前端请求接口的时候参数有问题，但是后面发现整个请求过程跟以往并无异样。</p>
-<p>&emsp;&emsp;后端同事比对了能在开发环境正常登陆的请求以及我本地登陆异常的接口，发现我本地登陆的时候少了一个session，此时项目经理还认为是Nginx配置的问题。</p>
-<p>&emsp;&emsp;我忽然想起来之前工作的公司在遇到这种登陆接口挂掉的时候是通过复制能正常访问网站的cookie到本地开发环境进行登陆的，当我采取同样的方式时发现本地的浏览器的session确实比能正常登陆的少了一条，而复制了session之后也可以正常登陆。通过反馈这一现象，帮助后端同事更快地定位到错误。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/04/login-problem/" data-id="cjz5bxq4m0000oourdz8ad0gy"
+      <a data-url="http://yoursite.com/2019/08/11/router-control-bug/" data-id="ck53x3prj000078fvkyyh4uyk"
          class="article-share-link">Share</a>
       
     </footer>
@@ -641,9 +639,9 @@
     <div class="float-right">
       <ul class="list-inline">
   
-    <li><i class="fe fe-bar-chart"></i> <span id="busuanzi_value_site_pv"></span></li>
-  
     <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+    <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
   
 </ul>
     </div>
@@ -725,8 +723,6 @@
   <script src="/fancybox/jquery.fancybox.min.js"></script>
 
 
-
-  <script src="/js/search.js"></script>
 
 
 <script src="/js/ocean.js"></script>

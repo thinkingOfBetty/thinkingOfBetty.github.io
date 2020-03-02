@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>
-    前端不要轻易轮询 |
+    bug解决记录——页面切换后定时器没有销毁 |
     
     Hexo</title>
   
@@ -23,7 +23,7 @@
 <body>
 <main class="content">
   <section class="outer">
-  <article id="post-polling" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  <article id="post-can&#39;t-stop-interval" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
     
@@ -31,7 +31,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      前端不要轻易轮询
+      bug解决记录——页面切换后定时器没有销毁
     </h1>
   
   
@@ -44,8 +44,8 @@
 
     
       <div class="article-meta">
-        <a href="/2019/11/27/polling/" class="article-date">
-  <time datetime="2019-11-26T16:00:00.000Z" itemprop="datePublished">2019-11-27</time>
+        <a href="/2020/03/02/can't-stop-interval/" class="article-date">
+  <time datetime="2020-03-01T16:00:00.000Z" itemprop="datePublished">2020-03-02</time>
 </a>
         
       </div>
@@ -57,15 +57,12 @@
       
 
       
-        <p>&emsp;&emsp;如非必要，尽量不要轻易轮询。盲目地用轮询往往会增加工作量、给服务器造成负担、没有实现实际功能。这里阐述下几种本来需要前端轮询、后面变成后端控制的场景。</p>
-<p>&emsp;&emsp;一、后端操作有延迟、比如需要社保苏醒时间等<br>&emsp;&emsp;执行某种编辑操作之后，前端在成功回调中刷新页面，结果数据不刷新。后端有某些操作是会延迟1~3秒才能真正地生效，这种情况，不要轮询、不要前端去瞎setTimeout,而是要让后端在操作真正完成之前将接口处于挂起（pending状态）。这样子才能将页面刷新的时间缩短至最小。</p>
-<p>&emsp;&emsp;二、后端也去轮询查询<br>&emsp;&emsp;场景：后端去轮询某个接口，最长时间不超过一分钟（其实一般如果请求封装的时候有设置超时时间，可能需要考虑轮询，或者看看能不能将请求的超时时间改成可配置，默认是设置的时间，但是可以针对特定接口进行修改）。如果项目没有设置或者设置的超时时间比后端（后端去轮询一般也有设置超时时间）的要长，那么应当让后端将接口挂起，而不是轮询。</p>
-<p>&emsp;&emsp;三、业务需求：实时更新服务截止日期。<br>&emsp;&emsp;这种轮询需要明确是否有必要，像我们的webui项目的token过期时间就是半小时，这种一般重新登录之后，会自己重新去请求服务是否过期的接口，可以不再轮询。这种情况，如果要轮询，需要尽量减少轮询的时间，比如距离服务过期还剩下一天才开始轮询或者是其他方法</p>
+        <p>&emsp;&emsp;前几天我给首页（路由为/home）添加了一个定时器，但是我发现“/home”下跳转到“/home/order-manage”时该定时器不仅没有被清除，反而定时器被触发的时间间隔从我设定的5秒，变成了2、3秒，一开始我以为是调用定时器的库有问题，但是回想到没有改变路由之前，定时器调用的时间间隔一直是准确的。。此时我一直在调试定时器封装库的代码，而后发现created钩子居然被调用了两次，但是destroy却没有被触发，这个时候我明白了为什么定时器触发的时间间隔会变短，原因就在于创建多了一个定时器，所以两个定时器被间隔触发，看起来就好像间隔变短了。<br>&emsp;&emsp;destroy却没有被触发的原因：一开始我定位的是在同个页面下，destroy中的代码没有被执行（因为当时注意到的是这两个路由指向的是同个页面，只是内容不同，现在想来这个想法好愚蠢，路由都变了，组件肯定是有被重新调用的，至于/home下的destroy没有被执行，这是因为使用了keep-alive）。<br>&emsp;&emsp;所以之后在公共组件（被两个页面同时使用）中使用定时器，需要监听路由的变化来判断是否要创建、销毁定时器，而不能直接创建定时器。同时，在涉及到页面之间跳转的bug时，要多考虑路由方面的问题。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/11/27/polling/" data-id="ck40xr44e000dlgfve5yquv0q"
+      <a data-url="http://yoursite.com/2020/03/02/can't-stop-interval/" data-id="ck79xfdfg0000hcfvdwcq041m"
          class="article-share-link">Share</a>
       
     </footer>
@@ -76,19 +73,19 @@
     
   <nav class="article-nav">
     
-      <a href="/2019/11/27/window-open/" class="article-nav-link">
+      <a href="/2020/03/02/nextTick-select/" class="article-nav-link">
         <strong class="article-nav-caption">Newer posts</strong>
         <div class="article-nav-title">
           
-            window.open
+            bug解决记录——给远程搜索框赋值后显示的是id而不是name
           
         </div>
       </a>
     
     
-      <a href="/2019/09/29/location/" class="article-nav-link">
+      <a href="/2020/02/23/IE-Cache/" class="article-nav-link">
         <strong class="article-nav-caption">Olde posts</strong>
-        <div class="article-nav-title">var location = window.location引发的坑</div>
+        <div class="article-nav-title">IE缓存策略带来的问题</div>
       </a>
     
   </nav>

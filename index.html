@@ -57,6 +57,116 @@
 
     
       
+        <article id="post-nextTick-select" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/03/02/nextTick-select/">bug解决记录——给远程搜索框赋值后显示的是id而不是name</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/03/02/nextTick-select/" class="article-date">
+  <time datetime="2020-03-01T16:00:00.000Z" itemprop="datePublished">2020-03-02</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;td描述：点击重置按钮后（前端会调用接口给表单赋值），原本显示名字的搜索框居然显示成id，而且该现象是偶现。<br>&emsp;&emsp;一开始我一直花时间在复现该td，但是我发现一直复现不了。于是直接去看代码逻辑，我起初怀疑是$set的问题，但是如果是$set的话，该问题应该是必现。后面我把问题定位在是给选择框赋值的时候，下拉框中的数据还没加载好，搜索框会因为没找到匹配的项而直接展示成id。但是当我把加载下拉框中的数据放在setTimeout中执行时，居然还没办法复现这个td时，我对这个方向的定位产生了怀疑。后面我直接把加载下拉框中的数据的代码给注释了，于是问题就复现了。。。讲真，我在复现这个问题的时候，测试跟我说的是只有线上环境的火狐浏览器才会，于是我为为了直接复现这个td花了几个小时，现在看来这样做真的傻的一匹，原因有如下两点：<br>&emsp;&emsp;1、测试的话并不完全可信，因为他们对于逻辑不严谨的代码产生的bug不会测试的面面俱到；<br>&emsp;&emsp;2、很多时候，留心代码的逻辑，多调试，总是能看出漏洞在哪里。<br>&emsp;&emsp;那么为什么这个td是偶现呢，问题就出在了缓存。在还没重新加载下拉框中列表的时候，这个时候网页中保存的下拉框列表的数据是上一次搜索返回的，因此只要你上一次搜索的下拉列表包含了重置操作中返回的数据，就能够在下拉框中正常显示name。相反，如果上一次搜索框查询的数据不包括重置返回的数据，则会复现该td。（普通选择器没出现该bug的原因就在于普通的选择器下拉框的数据基本都是固定的，基本不存在从接口中取回的数据是下拉框中没有的情况。）所以我感觉这种不是必现的bug其实可以直接定位是不是缓存数据的问题，如果不是，再定位到其他方向上。<br>&emsp;&emsp;这个td最后的解决方案是把给选择框赋值的操作放在$nextTick中去完成。普通选择器没出现该bug的原因就在于普通的选择器下拉框的数据基本都是固定的，基本不存在从接口中取回的数据是下拉框中没有的情况。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/03/02/nextTick-select/" data-id="ck79xfdgr0001hcfvw51oz2pk"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        <article id="post-can&#39;t-stop-interval" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/03/02/can't-stop-interval/">bug解决记录——页面切换后定时器没有销毁</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/03/02/can't-stop-interval/" class="article-date">
+  <time datetime="2020-03-01T16:00:00.000Z" itemprop="datePublished">2020-03-02</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;前几天我给首页（路由为/home）添加了一个定时器，但是我发现“/home”下跳转到“/home/order-manage”时该定时器不仅没有被清除，反而定时器被触发的时间间隔从我设定的5秒，变成了2、3秒，一开始我以为是调用定时器的库有问题，但是回想到没有改变路由之前，定时器调用的时间间隔一直是准确的。。此时我一直在调试定时器封装库的代码，而后发现created钩子居然被调用了两次，但是destroy却没有被触发，这个时候我明白了为什么定时器触发的时间间隔会变短，原因就在于创建多了一个定时器，所以两个定时器被间隔触发，看起来就好像间隔变短了。<br>&emsp;&emsp;destroy却没有被触发的原因：一开始我定位的是在同个页面下，destroy中的代码没有被执行（因为当时注意到的是这两个路由指向的是同个页面，只是内容不同，现在想来这个想法好愚蠢，路由都变了，组件肯定是有被重新调用的，至于/home下的destroy没有被执行，这是因为使用了keep-alive）。<br>&emsp;&emsp;所以之后在公共组件（被两个页面同时使用）中使用定时器，需要监听路由的变化来判断是否要创建、销毁定时器，而不能直接创建定时器。同时，在涉及到页面之间跳转的bug时，要多考虑路由方面的问题。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/03/02/can't-stop-interval/" data-id="ck79xfdfg0000hcfvdwcq041m"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-IE-Cache" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -98,7 +208,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/02/23/IE-Cache/" data-id="ck6z3651u0000f8uro4iv7c4v"
+      <a data-url="http://yoursite.com/2020/02/23/IE-Cache/" data-id="ck76y0w6r0000l4fv96btv99z"
          class="article-share-link">Share</a>
       
     </footer>
@@ -155,7 +265,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/01/09/provisional-headers-are-shown/" data-id="ck6z2ivgg000bkgurnb7bxy7q"
+      <a data-url="http://yoursite.com/2020/01/09/provisional-headers-are-shown/" data-id="ck5649z7q000014fvw89id5ix"
          class="article-share-link">Share</a>
       
     </footer>
@@ -241,7 +351,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/01/07/router-control/" data-id="cjz5bxq5m0004oourkizi3g2y"
+      <a data-url="http://yoursite.com/2020/01/07/router-control/" data-id="ck40xr44i000flgfvuygpjzf1"
          class="article-share-link">Share</a>
       
     </footer>
@@ -301,7 +411,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/13/canceled/" data-id="ck6z2ivg10003kgurqzhdazse"
+      <a data-url="http://yoursite.com/2019/12/13/canceled/" data-id="ck43lftoe000018fv2d7pdgnv"
          class="article-share-link">Share</a>
       
     </footer>
@@ -357,7 +467,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/11/reflog/" data-id="ck6z2ivgw000dkgursci4r22y"
+      <a data-url="http://yoursite.com/2019/12/11/reflog/" data-id="ck40xr44k000glgfvkg9s6ofh"
          class="article-share-link">Share</a>
       
     </footer>
@@ -413,7 +523,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/04/hot/" data-id="ck6z2ivg10007kgur6q14ohh9"
+      <a data-url="http://yoursite.com/2019/12/04/hot/" data-id="ck40xr43v0005lgfvf1vzqt15"
          class="article-share-link">Share</a>
       
     </footer>
@@ -494,7 +604,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/11/28/button-load/" data-id="ck6z2ivg10002kguru75w0nds"
+      <a data-url="http://yoursite.com/2019/11/28/button-load/" data-id="ck40xr4410008lgfv2m8d6qu5"
          class="article-share-link">Share</a>
       
     </footer>
@@ -549,123 +659,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/11/27/window-open/" data-id="ck6z2ivgw000fkgurpzxqsdsa"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-polling" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/11/27/polling/">前端不要轻易轮询</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/11/27/polling/" class="article-date">
-  <time datetime="2019-11-26T16:00:00.000Z" itemprop="datePublished">2019-11-27</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p>&emsp;&emsp;如非必要，尽量不要轻易轮询。盲目地用轮询往往会增加工作量、给服务器造成负担、没有实现实际功能。这里阐述下几种本来需要前端轮询、后面变成后端控制的场景。</p>
-<p>&emsp;&emsp;一、后端操作有延迟、比如需要社保苏醒时间等<br>&emsp;&emsp;执行某种编辑操作之后，前端在成功回调中刷新页面，结果数据不刷新。后端有某些操作是会延迟1~3秒才能真正地生效，这种情况，不要轮询、不要前端去瞎setTimeout,而是要让后端在操作真正完成之前将接口处于挂起（pending状态）。这样子才能将页面刷新的时间缩短至最小。</p>
-<p>&emsp;&emsp;二、后端也去轮询查询<br>&emsp;&emsp;场景：后端去轮询某个接口，最长时间不超过一分钟（其实一般如果请求封装的时候有设置超时时间，可能需要考虑轮询，或者看看能不能将请求的超时时间改成可配置，默认是设置的时间，但是可以针对特定接口进行修改）。如果项目没有设置或者设置的超时时间比后端（后端去轮询一般也有设置超时时间）的要长，那么应当让后端将接口挂起，而不是轮询。</p>
-<p>&emsp;&emsp;三、业务需求：实时更新服务截止日期。<br>&emsp;&emsp;这种轮询需要明确是否有必要，像我们的webui项目的token过期时间就是半小时，这种一般重新登录之后，会自己重新去请求服务是否过期的接口，可以不再轮询。这种情况，如果要轮询，需要尽量减少轮询的时间，比如距离服务过期还剩下一天才开始轮询或者是其他方法</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/11/27/polling/" data-id="ck6z2ivgg000akgurrkgcwcnd"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-location" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/09/29/location/">var location = window.location引发的坑</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/09/29/location/" class="article-date">
-  <time datetime="2019-09-28T16:00:00.000Z" itemprop="datePublished">2019-09-29</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p>&emsp;&emsp;之前项目修改了一个东西，就是将之前的login_url由指定的字符串改成了动态的ip，在使用了location去保存window.location之后，使得网页每次加载时都一直疯狂地请求资源，感觉是陷入了循环。这个bug我找了几个小时都没找到。当时是有发现当login_url后面加一些会报错的符号时，页面能正常加载，所以就把错误定位在了url上，可是后面一直把错误定位在后端对请求的转发造成没成功请求到资源的问题，现在仔细想，当时定位bug的思路是有很大问题的。</p>
-<p>&emsp;&emsp;首先，我应该意识到有代码造成了循环——因为查看了网络资源确实不断地在加载。其次，我应该意识到login_url的拼写错误或者是资源定位错误都不可能会有不断加载资源的问题。所以之后想问题纯粹点，别想那些让人感觉困惑的点。如果一开始就想到循环的问题，或许能早点解决问题。</p>
-<p>&emsp;&emsp;最后的还需要学习的就是不要用关键字作为变量名——js关键字包括，这次var location其实指代的就是window.location，如果我有在控制台进行尝试，应该是可以非常快速的发现问题的，尽管这个代码不会报错，但是在控制台造成的问题确可以让我很快地意识到问题在哪里。</p>
-<p>&emsp;&emsp;附上一个有保留关键字的<a href="https://www.jianshu.com/p/3c2cfcc2d227" target="_blank" rel="noopener">链接</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/29/location/" data-id="ck6z2ivgg0008kgur6dytdijz"
+      <a data-url="http://yoursite.com/2019/11/27/window-open/" data-id="ck40xr44o000ilgfv8aggvwuo"
          class="article-share-link">Share</a>
       
     </footer>
@@ -698,9 +692,9 @@
     <div class="float-right">
       <ul class="list-inline">
   
-    <li><i class="fe fe-bar-chart"></i> <span id="busuanzi_value_site_pv"></span></li>
-  
     <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+    <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
   
 </ul>
     </div>
@@ -782,8 +776,6 @@
   <script src="/fancybox/jquery.fancybox.min.js"></script>
 
 
-
-  <script src="/js/search.js"></script>
 
 
 <script src="/js/ocean.js"></script>

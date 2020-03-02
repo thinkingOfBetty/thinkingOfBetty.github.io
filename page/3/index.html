@@ -57,6 +57,124 @@
 
     
       
+        <article id="post-one-code-include-two-project" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/08/06/one-code-include-two-project/">同个项目合入两套代码（LSS&amp;&amp;VMS）</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/06/one-code-include-two-project/" class="article-date">
+  <time datetime="2019-08-05T16:00:00.000Z" itemprop="datePublished">2019-08-06</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;(1)先要明确公共模块，在涉及到公共部分的时候，要先确认下需求，即确认另外的项目是否也需要同样的变动，如果不需要，则需要做兼容处理；<br>&emsp;&emsp;(2)然后确认下迭代的顺序跟时间（后面迭代的分支在转测前需要把另一个代码分支合入，在合入代码有冲突时，最好是两个项目的人同时决定留下的内容），如果出现合入代码时不明确迭代发布顺序的情况，那么极有可能发生改动内容丢失的情况。</p>
+<p>&emsp;&emsp;举个例子在LSS迭代四跟vms1.0.1的开发过程中，我负责LSS而小卓负责vms，由于我们两个没有对齐迭代的发布时间，导致他误认为LSS迭代四的发布时间比vms1.0.1的发布时间要早，所以他在vms1.0.1转测之前合入了迭代四的内容。</p>
+<p>&emsp;&emsp;但是在得知了迭代四原来是比1.0.1晚发布的(此时迭代四的分支还没转测，尚存在一些bug)，他进行了代码的回滚，但是这次代码回滚对后面我迭代四转测前合入vms分支时造成了影响，也就是我迭代四里面有些修改由于合入了vms1.0.1而丢失了，这是因为vms在进行代码回滚的时候进行了某些删除操作，而合并分支时选择了以vms分支的操作为准而导致的。所以如果一旦合错分支时，再次进行合入要小心比对之前回滚的代码。</p>
+<p>&emsp;&emsp;由于这次回滚是在git上直接点击还原的，相当于通过新的合并请求来还原（新的合并请求就相当于这次请求的内容都进行了更改），并不是真正意义上的还原，所以下次合入该分支时，会认为这次还原之后的分支的修改时间是比较靠后的，也就是会以此次还原的代码为准，如果这次还原是通过还原主分支，则不会发生这种事情。</p>
+<p>&emsp;&emsp;所以：如果代码合入了主分支之后，主分支后面又没有其他的合入时，要进行回滚可以考虑直接回滚主分支,回滚主分支的风险比较大。。特别是后面有新的合入。所以最好是合入其他迭代的分支之前先考虑好。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/06/one-code-include-two-project/" data-id="ck40xr449000clgfvqhxqanxq"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        <article id="post-login-problem" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/08/04/login-problem/">登录问题排查</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/04/login-problem/" class="article-date">
+  <time datetime="2019-08-03T16:00:00.000Z" itemprop="datePublished">2019-08-04</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>登录失败问题原因：<br>前端和后端联调时，后台加了一个http配置参数，导致前端cookie校验错误；</p>
+<p>登录问题：登录时遇到接口返回“the csrf session token is missing”；</p>
+<p>&emsp;&emsp;在后端同事一直没有定位到问题所在时，我自己尝试帮忙排查问题。一开始看到session token is missing的时候，我是觉得可能前端请求接口的时候参数有问题，但是后面发现整个请求过程跟以往并无异样。</p>
+<p>&emsp;&emsp;后端同事比对了能在开发环境正常登陆的请求以及我本地登陆异常的接口，发现我本地登陆的时候少了一个session，此时项目经理还认为是Nginx配置的问题。</p>
+<p>&emsp;&emsp;我忽然想起来之前工作的公司在遇到这种登陆接口挂掉的时候是通过复制能正常访问网站的cookie到本地开发环境进行登陆的，当我采取同样的方式时发现本地的浏览器的session确实比能正常登陆的少了一条，而复制了session之后也可以正常登陆。通过反馈这一现象，帮助后端同事更快地定位到错误。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/04/login-problem/" data-id="ck40xr4420009lgfvl39zjtu7"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-quarter-select-code-opt" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -98,7 +216,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/03/quarter-select-code-opt/" data-id="cjz5bxq5m0003oour419wx0r1"
+      <a data-url="http://yoursite.com/2019/08/03/quarter-select-code-opt/" data-id="ck40xr44g000elgfv2freifgb"
          class="article-share-link">Share</a>
       
     </footer>
@@ -165,7 +283,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/02/hello-world/" data-id="cjypys3860002vourl3oaikuu"
+      <a data-url="http://yoursite.com/2019/08/02/hello-world/" data-id="ck40xr43q0003lgfvtneummr2"
          class="article-share-link">Share</a>
       
     </footer>
@@ -223,7 +341,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/31/new-hexo/" data-id="cjypys38b0003vourctzp6sdc"
+      <a data-url="http://yoursite.com/2019/07/31/new-hexo/" data-id="ck40xr447000blgfvulv0l615"
          class="article-share-link">Share</a>
       
     </footer>
@@ -256,9 +374,9 @@
     <div class="float-right">
       <ul class="list-inline">
   
-    <li><i class="fe fe-bar-chart"></i> <span id="busuanzi_value_site_pv"></span></li>
-  
     <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+    <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
   
 </ul>
     </div>
@@ -340,8 +458,6 @@
   <script src="/fancybox/jquery.fancybox.min.js"></script>
 
 
-
-  <script src="/js/search.js"></script>
 
 
 <script src="/js/ocean.js"></script>
