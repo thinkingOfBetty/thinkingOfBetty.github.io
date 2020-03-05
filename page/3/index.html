@@ -57,6 +57,66 @@
 
     
       
+        <article id="post-router-control-bug" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/08/11/router-control-bug/">路由控制权限遇到的加载顺序的问题</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/11/router-control-bug/" class="article-date">
+  <time datetime="2019-08-10T16:00:00.000Z" itemprop="datePublished">2019-08-11</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p> &emsp;&emsp;由于那个项目区分了两种用户权限，所以需要对特定用户屏蔽某个路由，防止其通过访问这个路由而看到无关的内容。这个路由下展示的内容也不算敏感，所以这次是前端直接做的屏蔽。倘若是比较敏感的内容，肯定得通过接口去控制。一开始我是选择在配置路由表的地方直接判断用户的身份，从而决定是否推入对应的路由映射。一开始测试感觉是没问题的，就是在本地切换假数据也是可以正常根据用户权限进行展示的。但是当我在本页面进行刷新时，问题出现了——就算有权限的用户也看不到页面，而只能从外面重新进入这个页面。</p>
+<p>&emsp;&emsp;找到产生bug的原因是——<font color="red">没有理清代码的加载顺序</font>，其实之前也有其它的bug是因为这个问题造成。这种bug并不都那么容易发现的，尤其当用到该字段的地方不是首页时。因为其它页面被访问时，获取该字段的代码一般都是已执行完毕。所以当你使用一个全局可能都会用到的变量时，尽量要清楚代码执行的顺序或者用到的地方是否响应式的（window.location赋值的变量不是响应式的，可以考虑有vue2.6发布的Vue.observer来代替。如果能保证请求是同步请求的才去选择这种方式对全局变量进行赋值，就算是赋值给store.state也要注意调用的地方，如果是在某个方法里调用时，则要考虑监听这个字段的方式；如果是在template中调用时则不必监听）。</p>
+<p>&emsp;&emsp;说回路由的问题，因为如果是从外面直接进来的话，可以直接访问store里存放的用户权限的数据，但是如果是在当前页面直接刷新，此时由于访问用户信息的接口调用比路由表要慢，所以尽管后面接口返回了信息，那页不会再改变对应的路由展示。</p>
+<p>&emsp;&emsp;一开始我想着在当前页去进行用户信息的监听，如果是没有权限的用户，则当它访问当前页时，在自动跳转回首页，这样子做其实是问题的，但是如果考虑到之后的扩展性，就是如果这种操作是针对很多页面都需要控制的，那么久需要在各个页面去进行这种判断。后面决定统一放在ROUTER.beforeEach里面进行处理，处理这个东西的过程我主要花了比较多的时间在重构获取用户信息的方式。</p>
+<p>&emsp;&emsp;一开始获取用户信息是放在某个页面里面去做的，后面改成在store里面的action，保持了整个文件的一致性。同时，这个请求应该是同步的（同步会对后面的加载造成阻塞，所以这个我觉得还得再考虑），这样子可以确认之后的事情是在获取了用户信息之后再进行的操作。</p>
+<p>&emsp;&emsp;另外一个需要注意的是，beforeEach这个钩子在路由每次改变的时候都会重新加载，因此不能在里面做比较消耗性能的事情，然后注意判断，只有在加载到对应路由的时候，才去做对应的事情，而不是每次切换路由都做一些当前路由下不需要做的事情。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/11/router-control-bug/" data-id="ck7eq9p3u000omsfvclj9bx24"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-one-code-include-two-project" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -100,7 +160,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/06/one-code-include-two-project/" data-id="ck40xr449000clgfvqhxqanxq"
+      <a data-url="http://yoursite.com/2019/08/06/one-code-include-two-project/" data-id="ck7eq9p3g000gmsfvnfsraxlb"
          class="article-share-link">Share</a>
       
     </footer>
@@ -159,7 +219,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/04/login-problem/" data-id="ck40xr4420009lgfvl39zjtu7"
+      <a data-url="http://yoursite.com/2019/08/04/login-problem/" data-id="ck7eq9p3a000dmsfv8hwab5s6"
          class="article-share-link">Share</a>
       
     </footer>
@@ -216,7 +276,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/03/quarter-select-code-opt/" data-id="ck40xr44g000elgfv2freifgb"
+      <a data-url="http://yoursite.com/2019/08/03/quarter-select-code-opt/" data-id="ck7eq9p3k000jmsfv6cob6hqx"
          class="article-share-link">Share</a>
       
     </footer>
@@ -283,7 +343,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/02/hello-world/" data-id="ck40xr43q0003lgfvtneummr2"
+      <a data-url="http://yoursite.com/2019/08/02/hello-world/" data-id="ck7eq9p2k0008msfvlh3zhg3u"
          class="article-share-link">Share</a>
       
     </footer>
@@ -341,7 +401,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/31/new-hexo/" data-id="ck40xr447000blgfvulv0l615"
+      <a data-url="http://yoursite.com/2019/07/31/new-hexo/" data-id="ck7eq9p3d000emsfva6en718s"
          class="article-share-link">Share</a>
       
     </footer>

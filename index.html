@@ -57,6 +57,68 @@
 
     
       
+        <article id="post-speed-optimize" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/03/05/speed-optimize/">页面加载过多DOM节点导致卡顿的优化实践</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/03/05/speed-optimize/" class="article-date">
+  <time datetime="2020-03-04T16:00:00.000Z" itemprop="datePublished">2020-03-05</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;安全运营中心新工单首页的工单详情——误判确认环节在开发时，确认的该节点展示的ioc条数最多为20条，但是实际上线后却发现展示的条数最多为1000条（这1000条数据展开来还有表格、图表等节点），所以当某条工单拥有1000条ioc节点时，不仅页面空白时间长，而且当数据加载完之后会直接导致网页崩溃。。</p>
+<p>&emsp;&emsp;之前优化的方案：1000条数据不一次性加载，而是10条10条加载，这样子加载可以减少空白的时间，更快地渲染数据，但是这样优化的缺点就是在数据加载的过程中，滚动条会一直缩小，导致数据加载过程中滚动条几乎滚动不了，等到数据加载完成后，页面依旧会卡顿。</p>
+<p>&emsp;&emsp;目前的优化方案主要有两方面，交互层面控制ioc展示的数量（最多只展示100条），前端代码层面的优化主要有如下两点：</p>
+<p>一、一次性加载所有的数据，但是不提前渲染没打开的ioc内部Dom节点，只渲染需要提交给后台的节点。</p>
+<p>二、用对象映射+render渲染的方式取代在template中用大量的v-else-if判断渲染哪个组件。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">map对象写法：</span><br><span class="line">[ORDER_STAGE_TYPE.notReady]: &#123;</span><br><span class="line">    name: <span class="string">'not-ready'</span>,</span><br><span class="line">    ref: REF_NAME,</span><br><span class="line">    props: &#123;</span><br><span class="line">        orderId: <span class="keyword">this</span>.orderId,</span><br><span class="line">        stageName: <span class="keyword">this</span>.stageName</span><br><span class="line">    &#125;,</span><br><span class="line">    on: &#123;</span><br><span class="line">        <span class="string">'is-ready'</span>: <span class="function"><span class="keyword">function</span> (<span class="params">stageName, data</span>)  </span>&#123;</span><br><span class="line">            vm.dataIsReady(stageName, data, index);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">render函数写法：</span><br><span class="line"></span><br><span class="line">renderTask (renderCallback) &#123;</span><br><span class="line">    <span class="keyword">let</span> vm = <span class="keyword">this</span>;</span><br><span class="line">    <span class="keyword">return</span> vm.tasks.map(<span class="function"><span class="keyword">function</span> (<span class="params">item, index</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (vm.shouldShowTask(item)) &#123;</span><br><span class="line">            <span class="keyword">const</span> MAP_ITEM = vm.getHandledMapItem(item, index);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> renderCallback(MAP_ITEM.name, &#123;</span><br><span class="line">                class: MAP_ITEM.class,</span><br><span class="line">                props: MAP_ITEM.props,</span><br><span class="line">                ref: MAP_ITEM.ref,</span><br><span class="line">                refInFor: <span class="literal">true</span>,</span><br><span class="line">                on: MAP_ITEM.on </span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中rener中的refInFor:true是很重要的一个属性，如果没有配置该属性，则用$refs获取的是单个对象，如果配置了则是一个数组，对于遍历dom节点获取提交给后台数据的，获取的是数组这点可是至关重要。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/03/05/speed-optimize/" data-id="ck7eqpy7z0000zwfvxly4oof2"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-nextTick-select" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -96,7 +158,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/03/02/nextTick-select/" data-id="ck79xfdgr0001hcfvw51oz2pk"
+      <a data-url="http://yoursite.com/2020/03/02/nextTick-select/" data-id="ck7eq9p3f000fmsfvpckrfvca"
          class="article-share-link">Share</a>
       
     </footer>
@@ -151,7 +213,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/03/02/can't-stop-interval/" data-id="ck79xfdfg0000hcfvdwcq041m"
+      <a data-url="http://yoursite.com/2020/03/02/can't-stop-interval/" data-id="ck7eq9p1e0004msfvrp1sjy8b"
          class="article-share-link">Share</a>
       
     </footer>
@@ -208,7 +270,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/02/23/IE-Cache/" data-id="ck76y0w6r0000l4fv96btv99z"
+      <a data-url="http://yoursite.com/2020/02/23/IE-Cache/" data-id="ck7eq9p1a0002msfvpb3g4drs"
          class="article-share-link">Share</a>
       
     </footer>
@@ -265,7 +327,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/01/09/provisional-headers-are-shown/" data-id="ck5649z7q000014fvw89id5ix"
+      <a data-url="http://yoursite.com/2020/01/09/provisional-headers-are-shown/" data-id="ck7eq9p3i000imsfvje6lgx5x"
          class="article-share-link">Share</a>
       
     </footer>
@@ -351,7 +413,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/01/07/router-control/" data-id="ck40xr44i000flgfvuygpjzf1"
+      <a data-url="http://yoursite.com/2020/01/07/router-control/" data-id="ck7eq9p3n000lmsfv2nyahxq0"
          class="article-share-link">Share</a>
       
     </footer>
@@ -411,7 +473,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/13/canceled/" data-id="ck43lftoe000018fv2d7pdgnv"
+      <a data-url="http://yoursite.com/2019/12/13/canceled/" data-id="ck7eq9p1h0005msfv48522vpg"
          class="article-share-link">Share</a>
       
     </footer>
@@ -467,7 +529,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/11/reflog/" data-id="ck40xr44k000glgfvkg9s6ofh"
+      <a data-url="http://yoursite.com/2019/12/11/reflog/" data-id="ck7eq9p3m000kmsfvhpbuyx4n"
          class="article-share-link">Share</a>
       
     </footer>
@@ -523,7 +585,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/04/hot/" data-id="ck40xr43v0005lgfvf1vzqt15"
+      <a data-url="http://yoursite.com/2019/12/04/hot/" data-id="ck7eq9p2q0009msfv3f03jth9"
          class="article-share-link">Share</a>
       
     </footer>
@@ -604,62 +666,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/11/28/button-load/" data-id="ck40xr4410008lgfv2m8d6qu5"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-window-open" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/11/27/window-open/">window.open</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/11/27/window-open/" class="article-date">
-  <time datetime="2019-11-26T16:00:00.000Z" itemprop="datePublished">2019-11-27</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p>  &emsp;&emsp;<br><img src="../img/window.png" alt></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/11/27/window-open/" data-id="ck40xr44o000ilgfv8aggvwuo"
+      <a data-url="http://yoursite.com/2019/11/28/button-load/" data-id="ck7eq9p1c0003msfvyhnt7o2y"
          class="article-share-link">Share</a>
       
     </footer>
