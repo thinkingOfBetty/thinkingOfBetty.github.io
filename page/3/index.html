@@ -57,6 +57,118 @@
 
     
       
+        <article id="post-loadingChunkFailed" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/08/19/loadingChunkFailed/">fix error——error(loading chunk xx failed.)</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/19/loadingChunkFailed/" class="article-date">
+  <time datetime="2019-08-18T16:00:00.000Z" itemprop="datePublished">2019-08-19</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;今天在项目中添加登陆功能之后，我发现第一次点击切换路由时是正常的，之后再切换时就会报错（loading chunk xx failed）一番搜索之后找到原因出在vue.config.js中的BASE_URL配置，当其在development时配置的是’./‘,去vue-cli官网看了下原来在history路由模式下，BASE_URL是不能采用相对路径的形式进行配置的。</p>
+<p><img src="../img/publicPath.png" alt></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/19/loadingChunkFailed/" data-id="ck7eq9p36000bmsfv18mvr86w"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        <article id="post-learn-session" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/08/13/learn-session/">通过小明的故事认识session</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/13/learn-session/" class="article-date">
+  <time datetime="2019-08-12T16:00:00.000Z" itemprop="datePublished">2019-08-13</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p> &emsp;&emsp;今天趁着坐地铁的时间阅读了一篇文章，关于理解session的，个人觉得讲的还不错，于是进行一个小结。文章通过故事的形式阐述了session的概念，同时讲到一些客户端与服务端通信时有关安全方面的问题。<br> &emsp;&emsp;这个故事讲述了一个没有记忆力的小明开了杂货铺，通过用笔记本电脑记录用户信息的故事。安全相关——其中一种方式是笔记本电脑记录的信息就相当于session，每次用户来的时候通过提供小明随机提供的sessionID，小明通过该id在笔记本中找到顾客消费的信息，从而更好的服务客户。另外一种方式是小明通过解密加密过的cookie直接得到客户信息，但是这种方式会使得客户保存过长的cookie，不是非常好。</p>
+<p><img src="../img/session.png" alt></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/13/learn-session/" data-id="ck7eq9p2v000amsfvvizu2gau"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-router-control-bug" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">

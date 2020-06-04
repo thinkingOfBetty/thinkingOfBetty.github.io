@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>
-    用DOMPurify处理传入给v-html内容 |
+    Archives: 2020/6 |
     
     Hexo</title>
   
@@ -23,86 +23,78 @@
 <body>
 <main class="content">
   <section class="outer">
-  <article id="post-v-html" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
+  <article class="articles">
     
-      <header class="article-header">
+    <h1 class="page-type-title">2020/6</h1>
+
+    
+    
+    
+      
+      
         
-  
-    <h1 class="article-title" itemprop="name">
-      用DOMPurify处理传入给v-html内容
-    </h1>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/09/04/v-html/" class="article-date">
-  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">2019-09-04</time>
+        
+    <div class="archives-wrap">
+      <div class="archive-year-wrap">
+        <a href="/archives/2020" class="archive-year">2020</a>
+      </div>
+      <div class="archives">
+        
+        <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2020/06/04/less-deep/" class="archive-article-date">
+  <time datetime="2020-06-03T16:00:00.000Z" itemprop="datePublished">06/04</time>
 </a>
+      
+  
+    <h2 itemprop="name">
+      <a class="archive-article-title" href="/2020/06/04/less-deep/">火狐中deep样式异常排查</a>
+    </h2>
+  
+  
+
+
+
+
+    </header>
+    
+    
+  </div>
+</article>
+        
+      
+      
+        <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2020/06/04/IE-queryString/" class="archive-article-date">
+  <time datetime="2020-06-03T16:00:00.000Z" itemprop="datePublished">06/04</time>
+</a>
+      
+  
+    <h2 itemprop="name">
+      <a class="archive-article-title" href="/2020/06/04/IE-queryString/">IE下get请求报错排查</a>
+    </h2>
+  
+  
+
+
+
+
+    </header>
+    
+    
+  </div>
+</article>
+        
         
       </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p> &emsp;&emsp;昨天提交代码的时候，同事审核到代码里面用到v-html，要求需对后台传入内容进行转义，否则可能会有安全性问题，比如后台现在传给你的内容是依赖用户输入的，假设后台直接把那段文本传到前端，那么就容易发生xss攻击。假如用户传的是一段scrpit代码，就用可能直接导致网页瘫痪。当时我直接调用了转义函数，结果发现标签被当成文本输出了，所以我知道了所谓转义应该是指的过滤，把非法的输入给过滤。此时DOMPurify就派上用场了。<br> &emsp;&emsp;DOMPurify使用：一、引入这个库 二、可以直接定义一个全局配置常量 三、调用DOMPurify.sanitize函数对要传入给v-html的内容进行处理。e.g v-html=”DOMPurify.sanitize(itemData.value, DOMPURIFY_CONFIG)”</p>
-<p> 全局配置参考如下：</p>
-<p>DOMPURIFY_CONFIG = {<br> &emsp;&emsp; USE_PROFILES: {html: true},  //允许所有安全的HTML元素，但不允许SVG或MathML<br> &emsp;&emsp; ALLOWED_ATTR: [‘style’],     //允许html元素上的style属性<br> &emsp;&emsp; WHOLE_DOCUMENT: true         //返回整个文档，包括<html>标签，为false则只返回body内（不包括body）的内容，设置为true是t为了拿到<br> &emsp;&emsp; style标签<br>};</html></p>
-
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/04/v-html/" data-id="ck7eq9p3p000mmsfv3fgnyrlp"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-    
-  <nav class="article-nav">
-    
-      <a href="/2019/09/09/deal-undefined/" class="article-nav-link">
-        <strong class="article-nav-caption">Newer posts</strong>
-        <div class="article-nav-title">
-          
-            字段值可能为undefined的处理
-          
-        </div>
-      </a>
-    
-    
-      <a href="/2019/09/04/$set/" class="article-nav-link">
-        <strong class="article-nav-caption">Olde posts</strong>
-        <div class="article-nav-title">$set采坑记</div>
-      </a>
-    
-  </nav>
-
-
-  
-
-  
     
   
 
-</article>
-
-
-
+  
 </section>
   <footer class="footer">
   <div class="outer">

@@ -57,6 +57,116 @@
 
     
       
+        <article id="post-less-deep" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/06/04/less-deep/">火狐中deep样式异常排查</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/06/04/less-deep/" class="article-date">
+  <time datetime="2020-06-03T16:00:00.000Z" itemprop="datePublished">2020-06-04</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;原因就是如果给父级元素加了/deep/，那么子级元素就不需要再加/deep/了。如果加上了的话，在谷歌浏览器对样式没有影响，但是打包后在火狐中样式会异常。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/06/04/less-deep/" data-id="ckb0l63ue000180fvn0omofre"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        <article id="post-IE-queryString" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/06/04/IE-queryString/">IE下get请求报错排查</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/06/04/IE-queryString/" class="article-date">
+  <time datetime="2020-06-03T16:00:00.000Z" itemprop="datePublished">2020-06-04</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p> &emsp;&emsp;报错原因：在ie下pathInfo的编码方式为UTF-8，而queryString的编码方式是GB2312编码（谷歌、火狐都是UTF-8），所以后台解析不了queryString中的内容，也就报错了。<br> &emsp;&emsp;解决方法：使用encodeURI对url进行包裹，或者是将get请求改成post。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/06/04/IE-queryString/" data-id="ckb0l63tg000080fvdckiwgy4"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-speed-optimize" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -530,143 +640,6 @@
     </div>
     <footer class="article-footer">
       <a data-url="http://yoursite.com/2019/12/11/reflog/" data-id="ck7eq9p3m000kmsfvhpbuyx4n"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-hot" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/12/04/hot/">理解热更新原理</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/12/04/hot/" class="article-date">
-  <time datetime="2019-12-03T16:00:00.000Z" itemprop="datePublished">2019-12-04</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p> &emsp;&emsp;今天学习了webpack-dev-server热更新的原理，大致的意思就是借助express启动的websocket让浏览器跟本地服务器建立双向的通信，然后通过webpack的compile的watch功能，监听文件的改变，然后通过websocker告诉浏览器最新的hash以及触发ok事件，触发ok事件之后，会通过webpack去检查更新的内容，从而去决定是reload还是进行模块替换，如果要模块替换，就调用hotApply函数进行新旧模块代码的替换，然后结合_webpack_require_去执行代码。因为这一切都涉及到当前运行环境，所以需要一开始时将websocket跟dev-server的代码塞进去bundle中，让客户端中也能执行这一块的代码。<br>&emsp;&emsp;另外两个需要注意的点就是：<br>（一）获取当前更新模块id时，是通过jsonp，可以立即直接脚本<br>（二）当webpack监听到文件变化之后，是写进内存而不是写进文件系统，这样可以加快速度。<br>自己理解画的图：<br><img src="../img/hot3.png" alt></p>
-<p>掘金跟知乎上的图：<br><img src="../img/hot1.png" alt><br><img src="../img/hot2.jpg" alt></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/04/hot/" data-id="ck7eq9p2q0009msfv3f03jth9"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-button-load" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/11/28/button-load/">封装load-btn</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/11/28/button-load/" class="article-date">
-  <time datetime="2019-11-27T16:00:00.000Z" itemprop="datePublished">2019-11-28</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p> &emsp;&emsp;之前由于公司组件库使用的load-btn是一直有load这个icon的，只是当loading的值为true时这个图标才会转动。但是产品线是要求该icon只在load的时候才出现。于是每次使用这个按钮，都需要使用v-if去写两次。所以需要自己重新对该load按钮进行封装。</p>
-<p> &emsp;&emsp;接下来阐述下封装这个按钮的几个过程。</p>
-<p>version 1.0 （接收参数：text、loading）</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">load-sfv-btn</span> <span class="attr">v-if</span>=<span class="string">"loading"</span>&gt;</span>&#123;&#123;text&#125;&#125;<span class="tag">&lt;/<span class="name">load-sfv-btn</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">sfv-primary-btn</span> <span class="attr">v-else</span>&gt;</span>&#123;&#123;text&#125;&#125;<span class="tag">&lt;/<span class="name">sfv-primary-btn</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>这种看着感觉没啥问题，但是等到我用另外种按钮的时候就需要额外拓展。</p>
-<p>version 1.2 （接收参数：text、loading、type（按钮的类型有primary、differ、primary、 danger、 blank、secondary、 circle））</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">span</span> <span class="attr">v-if</span>=<span class="string">"isPrimaryBtn"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">sfv-button-primary</span> @<span class="attr">click</span>=<span class="string">"handleClick"</span> </span></span><br><span class="line"><span class="tag">                        <span class="attr">v-if</span>=<span class="string">"!showLoading"</span>&gt;</span>&#123;&#123;text&#125;&#125;<span class="tag">&lt;/<span class="name">sfv-button-primary</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">sfv-button-load</span> <span class="attr">v-else</span> </span></span><br><span class="line"><span class="tag">                        <span class="attr">loading</span> </span></span><br><span class="line"><span class="tag">                        <span class="attr">class</span>=<span class="string">"sfv-btn-primary"</span>&gt;</span>&#123;&#123;text&#125;&#125;<span class="tag">&lt;/<span class="name">sfv-button-load</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">span</span> <span class="attr">v-if</span>=<span class="string">"isNormalBtn"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">sfv-button</span> @<span class="attr">click</span>=<span class="string">"handleClick"</span> </span></span><br><span class="line"><span class="tag">                <span class="attr">v-if</span>=<span class="string">"!showLoading"</span>&gt;</span>&#123;&#123;text&#125;&#125;<span class="tag">&lt;/<span class="name">sfv-button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">sfv-button-load</span> <span class="attr">v-else</span> </span></span><br><span class="line"><span class="tag">                        <span class="attr">loading</span>&gt;</span>&#123;&#123;text&#125;&#125;<span class="tag">&lt;/<span class="name">sfv-button-load</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>此时代码有点相似而冗余了，此时代码审核人mc建议这种根据不同状态展示相似组件的可以考虑用render去实现</p>
-<p>version 1.3 </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">render (createElement, context)  &#123;</span><br><span class="line">    <span class="keyword">let</span> &#123;text, loading, type&#125; = context.props, </span><br><span class="line">        domName,</span><br><span class="line">        btnClass;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (type === <span class="string">'primary'</span>) &#123;</span><br><span class="line">            domName = <span class="string">'sfv-button-primary'</span>;</span><br><span class="line">            btnClass = <span class="string">'sfv-btn-primary'</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            domName = <span class="string">'sfv-button'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (loading) &#123;</span><br><span class="line">        domName = <span class="string">'sfv-button-load'</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> createElement(</span><br><span class="line">            domName, text, &#123;</span><br><span class="line">                props:&#123;</span><br><span class="line">                    loading:<span class="literal">true</span></span><br><span class="line">                &#125;,</span><br><span class="line">                class: btnClass</span><br><span class="line">            &#125;</span><br><span class="line">        );</span><br><span class="line">        </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> createElement(</span><br><span class="line">        domName, &#123;</span><br><span class="line">            on:&#123;</span><br><span class="line">                click:context.data.on[<span class="string">'on-click'</span>]</span><br><span class="line">            &#125;,</span><br><span class="line">            domProps: &#123;</span><br><span class="line">                innerText: text</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>此时是可以看到感觉两个return应该是可以写成一个的，但是不知道为啥那个load-btn中text用domProps的形式传进去总是会有问题。此时mc觉得这种写法既不可以传slot、又不可以传其他类型的btn，感觉整个组件的灵活性比较差。此时重新看了组件源码，发现组件里面其实是通过不同的类名去区分组件的。因此有了版本1.4。</p>
-<p>version1.4</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">sfv-button</span> @<span class="attr">click</span>=<span class="string">"handleClick"</span> </span></span><br><span class="line"><span class="tag">            <span class="attr">v-if</span>=<span class="string">"!showLoading"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">:class</span>=<span class="string">"typeCls"</span>&gt;</span></span><br><span class="line">            &#123;&#123;text&#125;&#125;</span><br><span class="line">            <span class="tag">&lt;<span class="name">slot</span> <span class="attr">name</span>=<span class="string">"content"</span>&gt;</span><span class="tag">&lt;/<span class="name">slot</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">sfv-button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">sfv-button-load</span> <span class="attr">v-else</span> </span></span><br><span class="line"><span class="tag">                <span class="attr">loading</span></span></span><br><span class="line"><span class="tag">                <span class="attr">:class</span>=<span class="string">"typeCls"</span>&gt;</span></span><br><span class="line">                &#123;&#123;text&#125;&#125;</span><br><span class="line">                <span class="tag">&lt;<span class="name">slot</span> <span class="attr">name</span>=<span class="string">"loadContent"</span>&gt;</span><span class="tag">&lt;/<span class="name">slot</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">sfv-button-load</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>此时感觉有点兜兜转转倒回去的感觉，只是加多了多种按钮类型的拓展、同时添加了slot。但是乍一看才知道这种写法传slot的话还得传两个，既不够简洁、反而使用起来还麻烦了。<br>version1.5</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">sfv-button</span> @<span class="attr">click</span>=<span class="string">"handleClick"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">:class</span>=<span class="string">"typeCls"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">i</span> <span class="attr">slot</span>=<span class="string">"icon"</span> <span class="attr">:class</span>=<span class="string">"iconCls"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">span</span> <span class="attr">v-if</span>=<span class="string">"text"</span>&gt;</span>&#123;&#123;text&#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">slot</span> <span class="attr">v-else</span></span></span><br><span class="line"><span class="tag">                      <span class="attr">name</span>=<span class="string">"content"</span>&gt;</span><span class="tag">&lt;/<span class="name">slot</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">sfv-button</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>这次是通过动态class（公司组件中icon的展示用的是类名），感觉比上次简洁了点，但是此时还需考虑不直接使用封装好的load按钮，而是直接使用的图标控制，会不会造成原来组件功能不能使用。此时发现了一个bug，就是调用这个封装的组件时，配置disable属性是不生效的，此时有了version1.6<br>version1.6</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">sfv-button</span> @<span class="attr">click</span>=<span class="string">"handleClick"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">:class</span>=<span class="string">"typeCls"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">:default-disable</span>=<span class="string">"disabled"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">i</span> <span class="attr">slot</span>=<span class="string">"icon"</span> <span class="attr">:class</span>=<span class="string">"iconCls"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">slot</span> <span class="attr">name</span>=<span class="string">"content"</span>&gt;</span>&#123;&#123;text&#125;&#125;<span class="tag">&lt;/<span class="name">slot</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">sfv-button</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>此时问题又来了，我发现这个btn组件除了disable，应该还有其他属性的，所以有了目前的终极版本，希望以后还能继续改进。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">sfv-button</span> @<span class="attr">click</span>=<span class="string">"handleClick"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">:class</span>=<span class="string">"typeCls"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">v-bind</span>=<span class="string">"$attrs"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">v-on</span>=<span class="string">"$listeners"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">i</span> <span class="attr">slot</span>=<span class="string">"icon"</span> <span class="attr">:class</span>=<span class="string">"iconCls"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">slot</span> <span class="attr">name</span>=<span class="string">"content"</span>&gt;</span>&#123;&#123;text&#125;&#125;<span class="tag">&lt;/<span class="name">slot</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">sfv-button</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>一天花了不少时间在优化这个组件，从写重复的html，到写render函数，到写回html（加动态类型、动态icon、slot、$attr），到考虑组件库升级之后可能会发生的问题（用类型去添加icon，如果新版本把类名改了就容易出问题），感觉自己造轮子的能力还是有很大的提升空间，应该多去学习一些优秀源码的写法、设计思想。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/11/28/button-load/" data-id="ck7eq9p1c0003msfvyhnt7o2y"
          class="article-share-link">Share</a>
       
     </footer>
