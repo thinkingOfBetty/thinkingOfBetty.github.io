@@ -125,7 +125,7 @@
       <link href="/2019/12/11/reflog/"/>
       <url>/2019/12/11/reflog/</url>
       
-        <content type="html"><![CDATA[<p>&emsp;&emsp;依旧记得之前的一次reset –hard给我造成的心理阴影，要是早点get到这个点，或许当初会少些焦虑。<br>接下来还原一下reset –hard之后的场景以及记录下修复时需要用到什么指令。</p><p>首先用git log查看当前的commit记录<br><img src="../img/reflog/1.PNG" alt><br>然后用git reset –hard来强制回退commit，此时再用git log查看了之前的reflog的提交记录已经不见了<br><img src="../img/reflog/2.PNG" alt><br>此时如果要重新找回reflog的commit，需要用git reflog查看你在git上进行的每一步操作，然后找到之前的reflog的hash，再用git reset –hard 回退到丢失的commit。<font color="red">此时如果后面有新的commit，可以结合git cherry-pick来使用</font><br><img src="../img/reflog/3.PNG" alt><br>此时查看commit已经成功拾回。<br><img src="../img/reflog/4.PNG" alt></p>]]></content>
+        <content type="html"><![CDATA[<p>&emsp;&emsp;依旧记得之前的一次reset –hard给我造成的心理阴影，要是早点get到这个点，或许当初会少些焦虑。<br>接下来还原一下reset –hard之后的场景以及记录下修复时需要用到什么指令。</p><p>首先用git log查看当前的commit记录<br><img src="/2019/12/11/reflog/1.PNG" alt><br>然后用git reset –hard来强制回退commit，此时再用git log查看了之前的reflog的提交记录已经不见了<br><img src="/2019/12/11/reflog/2.PNG" alt><br>此时如果要重新找回reflog的commit，需要用git reflog查看你在git上进行的每一步操作，然后找到之前的reflog的hash，再用git reset –hard 回退到丢失的commit。<font color="red">此时如果后面有新的commit，可以结合git cherry-pick来使用</font><br><img src="/2019/12/11/reflog/3.PNG" alt><br>此时查看commit已经成功拾回。<br><img src="/2019/12/11/reflog/4.PNG" alt></p>]]></content>
       
       
       
@@ -138,7 +138,7 @@
       <link href="/2019/12/04/hot/"/>
       <url>/2019/12/04/hot/</url>
       
-        <content type="html"><![CDATA[<p> &emsp;&emsp;今天学习了webpack-dev-server热更新的原理，大致的意思就是借助express启动的websocket让浏览器跟本地服务器建立双向的通信，然后通过webpack的compile的watch功能，监听文件的改变，然后通过websocker告诉浏览器最新的hash以及触发ok事件，触发ok事件之后，会通过webpack去检查更新的内容，从而去决定是reload还是进行模块替换，如果要模块替换，就调用hotApply函数进行新旧模块代码的替换，然后结合_webpack_require_去执行代码。因为这一切都涉及到当前运行环境，所以需要一开始时将websocket跟dev-server的代码塞进去bundle中，让客户端中也能执行这一块的代码。<br>&emsp;&emsp;另外两个需要注意的点就是：<br>（一）获取当前更新模块id时，是通过jsonp，可以立即直接脚本<br>（二）当webpack监听到文件变化之后，是写进内存而不是写进文件系统，这样可以加快速度。<br>自己理解画的图：<br><img src="../img/hot3.png" alt></p><p>掘金跟知乎上的图：<br><img src="../img/hot1.png" alt><br><img src="../img/hot2.jpg" alt></p>]]></content>
+        <content type="html"><![CDATA[<p> &emsp;&emsp;今天学习了webpack-dev-server热更新的原理，大致的意思就是借助express启动的websocket让浏览器跟本地服务器建立双向的通信，然后通过webpack的compile的watch功能，监听文件的改变，然后通过websocker告诉浏览器最新的hash以及触发ok事件，触发ok事件之后，会通过webpack去检查更新的内容，从而去决定是reload还是进行模块替换，如果要模块替换，就调用hotApply函数进行新旧模块代码的替换，然后结合_webpack_require_去执行代码。因为这一切都涉及到当前运行环境，所以需要一开始时将websocket跟dev-server的代码塞进去bundle中，让客户端中也能执行这一块的代码。<br>&emsp;&emsp;另外两个需要注意的点就是：<br>（一）获取当前更新模块id时，是通过jsonp，可以立即直接脚本<br>（二）当webpack监听到文件变化之后，是写进内存而不是写进文件系统，这样可以加快速度。<br>自己理解画的图：<br><img src="/2019/12/04/hot/hot3.png" alt></p><p>掘金跟知乎上的图：<br><img src="/2019/12/04/hot/hot1.png" alt><br><img src="/2019/12/04/hot/hot2.jpg" alt></p>]]></content>
       
       
       
@@ -164,7 +164,7 @@
       <link href="/2019/11/27/window-open/"/>
       <url>/2019/11/27/window-open/</url>
       
-        <content type="html"><![CDATA[<p>  &emsp;&emsp;<br><img src="../img/window.png" alt></p>]]></content>
+        <content type="html"><![CDATA[<p>  &emsp;&emsp;<br><img src="/2019/11/27/window-open/window.png" alt></p>]]></content>
       
       
       
@@ -199,11 +199,11 @@
     
     
     <entry>
-      <title>forEach不能采用break或者returen false终止循环</title>
-      <link href="/2019/09/21/forEach/"/>
-      <url>/2019/09/21/forEach/</url>
+      <title>Vue中的data函数不会对数据进行深拷贝</title>
+      <link href="/2019/09/21/$data/"/>
+      <url>/2019/09/21/$data/</url>
       
-        <content type="html"><![CDATA[<p> &emsp;&emsp;前几天写PPT项目代码的时候，想要找到符合条件的一项，就跳出循环，不要继续循环，结果我用了break发现没用，查了一下原来forEach要终止循环需要通过try catch。。。于是发现some是提前终止循环的。但是some也有个坑要提防，那就是some去遍历一个空数组，会返回false；</p>]]></content>
+        <content type="html"><![CDATA[<p> &emsp;&emsp;今天代码rv的时候，审核人说不能直接修改父组件传的值，我代码里写的是 data() {return {commonForm: form}},然后通过修改commonForm的值，最后提交的也是commonform。按照常理来说，我改变commonForm确实form也会改变，但是我想起来我写了不少代码都是这种操作，但是控制台也没有警告说我修改了父组件的值，此时我以为Vue中的data函数会对数据进行深拷贝。结果后面在父组件进行监听，当加上deep:true时，发现子组件的commonForm进行修改时，父组件也会被修改，但是当没有加上deep:true时，则监听不到，由此推断出控制台监听的那种是默认为deep:false的，这种情况下，只有改变this.form对象的地址，控制台才会报错。由于这种操作确实改变了父组件的值，违反了单向数据流，所以需要使用深拷贝！！<br> &emsp;&emsp;<br><img src="/2019/09/21/$data/$data.png" alt></p>]]></content>
       
       
       
@@ -212,11 +212,11 @@
     
     
     <entry>
-      <title>Vue中的data函数不会对数据进行深拷贝</title>
-      <link href="/2019/09/21/$data/"/>
-      <url>/2019/09/21/$data/</url>
+      <title>forEach不能采用break或者returen false终止循环</title>
+      <link href="/2019/09/21/forEach/"/>
+      <url>/2019/09/21/forEach/</url>
       
-        <content type="html"><![CDATA[<p> &emsp;&emsp;今天代码rv的时候，审核人说不能直接修改父组件传的值，我代码里写的是 data() {return {commonForm: form}},然后通过修改commonForm的值，最后提交的也是commonform。按照常理来说，我改变commonForm确实form也会改变，但是我想起来我写了不少代码都是这种操作，但是控制台也没有警告说我修改了父组件的值，此时我以为Vue中的data函数会对数据进行深拷贝。结果后面在父组件进行监听，当加上deep:true时，发现子组件的commonForm进行修改时，父组件也会被修改，但是当没有加上deep:true时，则监听不到，由此推断出控制台监听的那种是默认为deep:false的，这种情况下，只有改变this.form对象的地址，控制台才会报错。由于这种操作确实改变了父组件的值，违反了单向数据流，所以需要使用深拷贝！！<br> &emsp;&emsp;<br><img src="../img/$data.png" alt></p>]]></content>
+        <content type="html"><![CDATA[<p> &emsp;&emsp;前几天写PPT项目代码的时候，想要找到符合条件的一项，就跳出循环，不要继续循环，结果我用了break发现没用，查了一下原来forEach要终止循环需要通过try catch。。。于是发现some是提前终止循环的。但是some也有个坑要提防，那就是some去遍历一个空数组，会返回false；</p>]]></content>
       
       
       
@@ -238,19 +238,6 @@
     
     
     <entry>
-      <title>用DOMPurify处理传入给v-html内容</title>
-      <link href="/2019/09/04/v-html/"/>
-      <url>/2019/09/04/v-html/</url>
-      
-        <content type="html"><![CDATA[<p> &emsp;&emsp;昨天提交代码的时候，同事审核到代码里面用到v-html，要求需对后台传入内容进行转义，否则可能会有安全性问题，比如后台现在传给你的内容是依赖用户输入的，假设后台直接把那段文本传到前端，那么就容易发生xss攻击。假如用户传的是一段scrpit代码，就用可能直接导致网页瘫痪。当时我直接调用了转义函数，结果发现标签被当成文本输出了，所以我知道了所谓转义应该是指的过滤，把非法的输入给过滤。此时DOMPurify就派上用场了。<br> &emsp;&emsp;DOMPurify使用：一、引入这个库 二、可以直接定义一个全局配置常量 三、调用DOMPurify.sanitize函数对要传入给v-html的内容进行处理。e.g v-html=”DOMPurify.sanitize(itemData.value, DOMPURIFY_CONFIG)”</p><p> 全局配置参考如下：</p><p>DOMPURIFY_CONFIG = {<br> &emsp;&emsp; USE_PROFILES: {html: true},  //允许所有安全的HTML元素，但不允许SVG或MathML<br> &emsp;&emsp; ALLOWED_ATTR: [‘style’],     //允许html元素上的style属性<br> &emsp;&emsp; WHOLE_DOCUMENT: true         //返回整个文档，包括<html>标签，为false则只返回body内（不包括body）的内容，设置为true是t为了拿到<br> &emsp;&emsp; style标签<br>};</html></p>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>$set采坑记</title>
       <link href="/2019/09/04/$set/"/>
       <url>/2019/09/04/$set/</url>
@@ -264,11 +251,24 @@
     
     
     <entry>
+      <title>用DOMPurify处理传入给v-html内容</title>
+      <link href="/2019/09/04/v-html/"/>
+      <url>/2019/09/04/v-html/</url>
+      
+        <content type="html"><![CDATA[<p> &emsp;&emsp;昨天提交代码的时候，同事审核到代码里面用到v-html，要求需对后台传入内容进行转义，否则可能会有安全性问题，比如后台现在传给你的内容是依赖用户输入的，假设后台直接把那段文本传到前端，那么就容易发生xss攻击。假如用户传的是一段scrpit代码，就用可能直接导致网页瘫痪。当时我直接调用了转义函数，结果发现标签被当成文本输出了，所以我知道了所谓转义应该是指的过滤，把非法的输入给过滤。此时DOMPurify就派上用场了。<br> &emsp;&emsp;DOMPurify使用：一、引入这个库 二、可以直接定义一个全局配置常量 三、调用DOMPurify.sanitize函数对要传入给v-html的内容进行处理。e.g v-html=”DOMPurify.sanitize(itemData.value, DOMPURIFY_CONFIG)”</p><p> 全局配置参考如下：</p><p>DOMPURIFY_CONFIG = {<br> &emsp;&emsp; USE_PROFILES: {html: true},  //允许所有安全的HTML元素，但不允许SVG或MathML<br> &emsp;&emsp; ALLOWED_ATTR: [‘style’],     //允许html元素上的style属性<br> &emsp;&emsp; WHOLE_DOCUMENT: true         //返回整个文档，包括<html>标签，为false则只返回body内（不包括body）的内容，设置为true是t为了拿到<br> &emsp;&emsp; style标签<br>};</html></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>fix error——error(loading chunk xx failed.)</title>
       <link href="/2019/08/19/loadingChunkFailed/"/>
       <url>/2019/08/19/loadingChunkFailed/</url>
       
-        <content type="html"><![CDATA[<p>&emsp;&emsp;今天在项目中添加登陆功能之后，我发现第一次点击切换路由时是正常的，之后再切换时就会报错（loading chunk xx failed）一番搜索之后找到原因出在vue.config.js中的BASE_URL配置，当其在development时配置的是’./‘,去vue-cli官网看了下原来在history路由模式下，BASE_URL是不能采用相对路径的形式进行配置的。</p><p><img src="../img/publicPath.png" alt></p>]]></content>
+        <content type="html"><![CDATA[<p>&emsp;&emsp;今天在项目中添加登陆功能之后，我发现第一次点击切换路由时是正常的，之后再切换时就会报错（loading chunk xx failed）一番搜索之后找到原因出在vue.config.js中的BASE_URL配置，当其在development时配置的是’./‘,去vue-cli官网看了下原来在history路由模式下，BASE_URL是不能采用相对路径的形式进行配置的。</p><p><img src="/2019/08/19/loadingChunkFailed/publicPath.png" alt></p>]]></content>
       
       
       
@@ -281,7 +281,7 @@
       <link href="/2019/08/13/learn-session/"/>
       <url>/2019/08/13/learn-session/</url>
       
-        <content type="html"><![CDATA[<p> &emsp;&emsp;今天趁着坐地铁的时间阅读了一篇文章，关于理解session的，个人觉得讲的还不错，于是进行一个小结。文章通过故事的形式阐述了session的概念，同时讲到一些客户端与服务端通信时有关安全方面的问题。<br> &emsp;&emsp;这个故事讲述了一个没有记忆力的小明开了杂货铺，通过用笔记本电脑记录用户信息的故事。安全相关——其中一种方式是笔记本电脑记录的信息就相当于session，每次用户来的时候通过提供小明随机提供的sessionID，小明通过该id在笔记本中找到顾客消费的信息，从而更好的服务客户。另外一种方式是小明通过解密加密过的cookie直接得到客户信息，但是这种方式会使得客户保存过长的cookie，不是非常好。</p><p><img src="../img/session.png" alt></p>]]></content>
+        <content type="html"><![CDATA[<p> &emsp;&emsp;今天趁着坐地铁的时间阅读了一篇文章，关于理解session的，个人觉得讲的还不错，于是进行一个小结。文章通过故事的形式阐述了session的概念，同时讲到一些客户端与服务端通信时有关安全方面的问题。<br> &emsp;&emsp;这个故事讲述了一个没有记忆力的小明开了杂货铺，通过用笔记本电脑记录用户信息的故事。安全相关——其中一种方式是笔记本电脑记录的信息就相当于session，每次用户来的时候通过提供小明随机提供的sessionID，小明通过该id在笔记本中找到顾客消费的信息，从而更好的服务客户。另外一种方式是小明通过解密加密过的cookie直接得到客户信息，但是这种方式会使得客户保存过长的cookie，不是非常好。</p><p><img src="/2019/08/13/learn-session/session.png" alt></p>]]></content>
       
       
       
