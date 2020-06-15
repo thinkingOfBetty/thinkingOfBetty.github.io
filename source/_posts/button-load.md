@@ -1,6 +1,8 @@
 ---
 title: 封装load-btn
 date: 2019-11-28
+tags: 
+     - 组件封装
 ---
 
  &emsp;&emsp;之前由于公司组件库使用的load-btn是一直有load这个icon的，只是当loading的值为true时这个图标才会转动。但是产品线是要求该icon只在load的时候才出现。于是每次使用这个按钮，都需要使用v-if去写两次。所以需要自己重新对该load按钮进行封装。

@@ -1,6 +1,8 @@
 ---
 title: 用reflog拯救reset --hard造成的文件丢失
 date: 2019-12-11
+tags: 
+     - git
 ---
 
 &emsp;&emsp;依旧记得之前的一次reset --hard给我造成的心理阴影，要是早点get到这个点，或许当初会少些焦虑。

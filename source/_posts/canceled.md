@@ -1,6 +1,8 @@
 ---
 title: 非相同请求被canceled的bug排查
 date: 2019-12-13
+tags: 
+     - bug记录
 ---
 
 **BUG描述** 
