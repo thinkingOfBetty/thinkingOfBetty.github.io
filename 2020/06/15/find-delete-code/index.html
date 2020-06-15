@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>
-    通过小明的故事认识session |
+    找回删除分支中的commit |
     
     Hexo</title>
   
@@ -23,7 +23,7 @@
 <body>
 <main class="content">
   <section class="outer">
-  <article id="post-learn-session" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  <article id="post-find-delete-code" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
     
@@ -31,7 +31,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      通过小明的故事认识session
+      找回删除分支中的commit
     </h1>
   
   
@@ -44,8 +44,8 @@
 
     
       <div class="article-meta">
-        <a href="/2019/08/13/learn-session/" class="article-date">
-  <time datetime="2019-08-12T16:00:00.000Z" itemprop="datePublished">2019-08-13</time>
+        <a href="/2020/06/15/find-delete-code/" class="article-date">
+  <time datetime="2020-06-14T16:00:00.000Z" itemprop="datePublished">2020-06-15</time>
 </a>
         
       </div>
@@ -57,15 +57,22 @@
       
 
       
-        <p> &emsp;&emsp;今天趁着坐地铁的时间阅读了一篇文章，关于理解session的，个人觉得讲的还不错，于是进行一个小结。文章通过故事的形式阐述了session的概念，同时讲到一些客户端与服务端通信时有关安全方面的问题。<br> &emsp;&emsp;这个故事讲述了一个没有记忆力的小明开了杂货铺，通过用笔记本电脑记录用户信息的故事。安全相关——其中一种方式是笔记本电脑记录的信息就相当于session，每次用户来的时候通过提供小明随机提供的sessionID，小明通过该id在笔记本中找到顾客消费的信息，从而更好的服务客户。另外一种方式是小明通过解密加密过的cookie直接得到客户信息，但是这种方式会使得客户保存过长的cookie，不是非常好。</p>
-<p><img src="/2019/08/13/learn-session/session.png" alt></p>
+        <p>&emsp;&emsp;之前一个项目的一个模块已经做的差不多了，然后规划那边又说不要了，这时候把代码上库也不是，删除了也不是（万一后面又要用了呢），所以我就习惯地把代码commit了，commit信息写的是“暂存”。但是过了很久这个分支还是没有用，我就把它删除了。后面又要了，其实找这个东西不难，就是因为我的commit里面有几个都是叫暂存，虽然“暂存”最后被不会被我推入库，但是就因为这过于随意的命名，使得我找回的过程略显曲折。</p>
+<p>找回步骤分两步：<br>第一步： 查看分支的变更记录——这一步需要在记住分支名的基础上，所以个人本地的开发分支命名也得有规范</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reflog | grep <span class="string">'分支名'</span></span><br></pre></td></tr></table></figure>
+
+<p>第二步： 查看之前commit的信息，找到对应的要回退的id</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b 分支名 HEAD@&#123;id&#125;</span><br></pre></td></tr></table></figure>
+
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/13/learn-session/" data-id="ckbgaup7j000jmgfvifaqovb4"
+      <a data-url="http://yoursite.com/2020/06/15/find-delete-code/" data-id="ckbgefyy00000sgfvbabmq8ki"
          class="article-share-link">Share</a>
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li></ul>
+
     </footer>
 
   </div>
@@ -74,19 +81,10 @@
     
   <nav class="article-nav">
     
-      <a href="/2019/08/19/loadingChunkFailed/" class="article-nav-link">
-        <strong class="article-nav-caption">Newer posts</strong>
-        <div class="article-nav-title">
-          
-            fix error——error(loading chunk xx failed.)
-          
-        </div>
-      </a>
     
-    
-      <a href="/2019/08/11/router-control-bug/" class="article-nav-link">
+      <a href="/2020/06/04/less-deep/" class="article-nav-link">
         <strong class="article-nav-caption">Olde posts</strong>
-        <div class="article-nav-title">路由控制权限遇到的加载顺序的问题</div>
+        <div class="article-nav-title">火狐中deep样式异常排查</div>
       </a>
     
   </nav>

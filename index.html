@@ -57,6 +57,69 @@
 
     
       
+        <article id="post-find-delete-code" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/06/15/find-delete-code/">找回删除分支中的commit</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/06/15/find-delete-code/" class="article-date">
+  <time datetime="2020-06-14T16:00:00.000Z" itemprop="datePublished">2020-06-15</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;之前一个项目的一个模块已经做的差不多了，然后规划那边又说不要了，这时候把代码上库也不是，删除了也不是（万一后面又要用了呢），所以我就习惯地把代码commit了，commit信息写的是“暂存”。但是过了很久这个分支还是没有用，我就把它删除了。后面又要了，其实找这个东西不难，就是因为我的commit里面有几个都是叫暂存，虽然“暂存”最后被不会被我推入库，但是就因为这过于随意的命名，使得我找回的过程略显曲折。</p>
+<p>找回步骤分两步：<br>第一步： 查看分支的变更记录——这一步需要在记住分支名的基础上，所以个人本地的开发分支命名也得有规范</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reflog | grep <span class="string">'分支名'</span></span><br></pre></td></tr></table></figure>
+
+<p>第二步： 查看之前commit的信息，找到对应的要回退的id</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b 分支名 HEAD@&#123;id&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/06/15/find-delete-code/" data-id="ckbgefyy00000sgfvbabmq8ki"
+         class="article-share-link">Share</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-less-deep" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -96,9 +159,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/06/04/less-deep/" data-id="ckb94iozk000dgofvapgike5t"
+      <a data-url="http://yoursite.com/2020/06/04/less-deep/" data-id="ckbgaup7o000mmgfvbr45j2dj"
          class="article-share-link">Share</a>
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/less/">less</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/火狐/">火狐</a></li></ul>
+
     </footer>
 
   </div>
@@ -151,7 +216,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/06/04/IE-queryString/" data-id="ckb94ioyj0002gofvbqfhxxm5"
+      <a data-url="http://yoursite.com/2020/06/04/IE-queryString/" data-id="ckbgaup680006mgfv04xwsv4c"
          class="article-share-link">Share</a>
       
     </footer>
@@ -213,62 +278,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/03/05/speed-optimize/" data-id="ckb94ip0p000sgofvuegur8f5"
-         class="article-share-link">Share</a>
-      
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-nextTick-select" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2020/03/02/nextTick-select/">bug解决记录——给远程搜索框赋值后显示的是id而不是name</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2020/03/02/nextTick-select/" class="article-date">
-  <time datetime="2020-03-01T16:00:00.000Z" itemprop="datePublished">2020-03-02</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p>&emsp;&emsp;td描述：点击重置按钮后（前端会调用接口给表单赋值），原本显示名字的搜索框居然显示成id，而且该现象是偶现。<br>&emsp;&emsp;一开始我一直花时间在复现该td，但是我发现一直复现不了。于是直接去看代码逻辑，我起初怀疑是$set的问题，但是如果是$set的话，该问题应该是必现。后面我把问题定位在是给选择框赋值的时候，下拉框中的数据还没加载好，搜索框会因为没找到匹配的项而直接展示成id。但是当我把加载下拉框中的数据放在setTimeout中执行时，居然还没办法复现这个td时，我对这个方向的定位产生了怀疑。后面我直接把加载下拉框中的数据的代码给注释了，于是问题就复现了。。。讲真，我在复现这个问题的时候，测试跟我说的是只有线上环境的火狐浏览器才会，于是我为为了直接复现这个td花了几个小时，现在看来这样做真的傻的一匹，原因有如下两点：<br>&emsp;&emsp;<font color="red">1、测试的话并不完全可信，因为他们对于逻辑不严谨的代码产生的bug不会测试的面面俱到；<br>&emsp;&emsp;2、很多时候，留心代码的逻辑，多调试，总是能看出漏洞在哪里</font>。<br>&emsp;&emsp;那么为什么这个td是偶现呢，问题就出在了缓存。在还没重新加载下拉框中列表的时候，这个时候网页中保存的下拉框列表的数据是上一次搜索返回的，因此只要你上一次搜索的下拉列表包含了重置操作中返回的数据，就能够在下拉框中正常显示name。相反，如果上一次搜索框查询的数据不包括重置返回的数据，则会复现该td。（普通选择器没出现该bug的原因就在于普通的选择器下拉框的数据基本都是固定的，基本不存在从接口中取回的数据是下拉框中没有的情况。）所以我感觉这种不是必现的bug其实可以直接定位是不是缓存数据的问题，如果不是，再定位到其他方向上。<br>&emsp;&emsp;这个td最后的解决方案是把给选择框赋值的操作放在$nextTick中去完成。普通选择器没出现该bug的原因就在于普通的选择器下拉框的数据基本都是固定的，基本不存在从接口中取回的数据是下拉框中没有的情况。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/03/02/nextTick-select/" data-id="ckb94iozv000ggofvykxezv54"
+      <a data-url="http://yoursite.com/2020/03/05/speed-optimize/" data-id="ckbgaup8e0013mgfvqcox7c6k"
          class="article-share-link">Share</a>
       
     </footer>
@@ -323,7 +333,64 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/03/02/can't-stop-interval/" data-id="ckb94ioyv0006gofvvd2i5bxn"
+      <a data-url="http://yoursite.com/2020/03/02/can't-stop-interval/" data-id="ckbgaup6h0007mgfvunnvw311"
+         class="article-share-link">Share</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bug记录/">bug记录</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        <article id="post-nextTick-select" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/03/02/nextTick-select/">bug解决记录——给远程搜索框赋值后显示的是id而不是name</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/03/02/nextTick-select/" class="article-date">
+  <time datetime="2020-03-01T16:00:00.000Z" itemprop="datePublished">2020-03-02</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;td描述：点击重置按钮后（前端会调用接口给表单赋值），原本显示名字的搜索框居然显示成id，而且该现象是偶现。<br>&emsp;&emsp;一开始我一直花时间在复现该td，但是我发现一直复现不了。于是直接去看代码逻辑，我起初怀疑是$set的问题，但是如果是$set的话，该问题应该是必现。后面我把问题定位在是给选择框赋值的时候，下拉框中的数据还没加载好，搜索框会因为没找到匹配的项而直接展示成id。但是当我把加载下拉框中的数据放在setTimeout中执行时，居然还没办法复现这个td时，我对这个方向的定位产生了怀疑。后面我直接把加载下拉框中的数据的代码给注释了，于是问题就复现了。。。讲真，我在复现这个问题的时候，测试跟我说的是只有线上环境的火狐浏览器才会，于是我为为了直接复现这个td花了几个小时，现在看来这样做真的傻的一匹，原因有如下两点：<br>&emsp;&emsp;<font color="red">1、测试的话并不完全可信，因为他们对于逻辑不严谨的代码产生的bug不会测试的面面俱到；<br>&emsp;&emsp;2、很多时候，留心代码的逻辑，多调试，总是能看出漏洞在哪里</font>。<br>&emsp;&emsp;那么为什么这个td是偶现呢，问题就出在了缓存。在还没重新加载下拉框中列表的时候，这个时候网页中保存的下拉框列表的数据是上一次搜索返回的，因此只要你上一次搜索的下拉列表包含了重置操作中返回的数据，就能够在下拉框中正常显示name。相反，如果上一次搜索框查询的数据不包括重置返回的数据，则会复现该td。（普通选择器没出现该bug的原因就在于普通的选择器下拉框的数据基本都是固定的，基本不存在从接口中取回的数据是下拉框中没有的情况。）所以我感觉这种不是必现的bug其实可以直接定位是不是缓存数据的问题，如果不是，再定位到其他方向上。<br>&emsp;&emsp;这个td最后的解决方案是把给选择框赋值的操作放在$nextTick中去完成。普通选择器没出现该bug的原因就在于普通的选择器下拉框的数据基本都是固定的，基本不存在从接口中取回的数据是下拉框中没有的情况。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/03/02/nextTick-select/" data-id="ckbgaup7t000qmgfv8tt3ry3w"
          class="article-share-link">Share</a>
       
     </footer>
@@ -380,7 +447,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/02/23/IE-Cache/" data-id="ckb94ioyn0003gofv57gect2k"
+      <a data-url="http://yoursite.com/2020/02/23/IE-Cache/" data-id="ckbgaup5r0003mgfv651t09nm"
          class="article-share-link">Share</a>
       
     </footer>
@@ -437,7 +504,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/01/09/provisional-headers-are-shown/" data-id="ckb94ip0c000kgofvpqbpti1z"
+      <a data-url="http://yoursite.com/2020/01/09/provisional-headers-are-shown/" data-id="ckbgaup80000vmgfvkkoaml3k"
          class="article-share-link">Share</a>
       
     </footer>
@@ -523,7 +590,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/01/07/router-control/" data-id="ckb94ip0i000ogofv45yroy06"
+      <a data-url="http://yoursite.com/2020/01/07/router-control/" data-id="ckbgaup8d0012mgfvn23zisi4"
          class="article-share-link">Share</a>
       
     </footer>
@@ -583,65 +650,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/13/canceled/" data-id="ckb94ioys0005gofvou8bv8ms"
+      <a data-url="http://yoursite.com/2019/12/13/canceled/" data-id="ckbgaup6q000amgfv6kipdukg"
          class="article-share-link">Share</a>
       
-    </footer>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bug记录/">bug记录</a></li></ul>
 
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-reflog" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/12/11/reflog/">用reflog拯救reset --hard造成的文件丢失</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/12/11/reflog/" class="article-date">
-  <time datetime="2019-12-10T16:00:00.000Z" itemprop="datePublished">2019-12-11</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p>&emsp;&emsp;依旧记得之前的一次reset –hard给我造成的心理阴影，要是早点get到这个点，或许当初会少些焦虑。<br>接下来还原一下reset –hard之后的场景以及记录下修复时需要用到什么指令。</p>
-<p>首先用git log查看当前的commit记录<br><img src="/2019/12/11/reflog/1.PNG" alt><br>然后用git reset –hard来强制回退commit，此时再用git log查看了之前的reflog的提交记录已经不见了<br><img src="/2019/12/11/reflog/2.PNG" alt><br>此时如果要重新找回reflog的commit，需要用git reflog查看你在git上进行的每一步操作，然后找到之前的reflog的hash，再用git reset –hard 回退到丢失的commit。<font color="red">此时如果后面有新的commit，可以结合git cherry-pick来使用</font><br><img src="/2019/12/11/reflog/3.PNG" alt><br>此时查看commit已经成功拾回。<br><img src="/2019/12/11/reflog/4.PNG" alt></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/11/reflog/" data-id="ckb94ip0h000ngofvfkjrcmkz"
-         class="article-share-link">Share</a>
-      
     </footer>
 
   </div>
@@ -674,8 +687,6 @@
   
     <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
   
-    <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
-  
 </ul>
     </div>
     <ul class="list-inline">
@@ -707,6 +718,10 @@
       </li>
     
       <li class="nav-item">
+        <a class="nav-item-link" href="/tags">Tags</a>
+      </li>
+    
+      <li class="nav-item">
         <a class="nav-item-link" href="/gallery">Gallery</a>
       </li>
     
@@ -715,7 +730,7 @@
       </li>
     
     <li class="nav-item">
-      <a class="nav-item-link nav-item-search" title="Search">
+      <a class="nav-item-link nav-item-search" title="搜索">
         <i class="fe fe-search"></i>
         Search
       </a>

@@ -57,6 +57,65 @@
 
     
       
+        <article id="post-v-html" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/09/04/v-html/">用DOMPurify处理传入给v-html内容</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/09/04/v-html/" class="article-date">
+  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">2019-09-04</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p> &emsp;&emsp;昨天提交代码的时候，同事审核到代码里面用到v-html，要求需对后台传入内容进行转义，否则可能会有安全性问题，比如后台现在传给你的内容是依赖用户输入的，假设后台直接把那段文本传到前端，那么就容易发生xss攻击。假如用户传的是一段scrpit代码，就用可能直接导致网页瘫痪。当时我直接调用了转义函数，结果发现标签被当成文本输出了，所以我知道了所谓转义应该是指的过滤，把非法的输入给过滤。此时DOMPurify就派上用场了。<br> &emsp;&emsp;DOMPurify使用：一、引入这个库 二、可以直接定义一个全局配置常量 三、调用DOMPurify.sanitize函数对要传入给v-html的内容进行处理。e.g v-html=”DOMPurify.sanitize(itemData.value, DOMPURIFY_CONFIG)”</p>
+<p> 全局配置参考如下：</p>
+<p>DOMPURIFY_CONFIG = {<br> &emsp;&emsp; USE_PROFILES: {html: true},  //允许所有安全的HTML元素，但不允许SVG或MathML<br> &emsp;&emsp; ALLOWED_ATTR: [‘style’],     //允许html元素上的style属性<br> &emsp;&emsp; WHOLE_DOCUMENT: true         //返回整个文档，包括<html>标签，为false则只返回body内（不包括body）的内容，设置为true是t为了拿到<br> &emsp;&emsp; style标签<br>};</html></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/09/04/v-html/" data-id="ckbgaup8g0014mgfvt087ao8a"
+         class="article-share-link">Share</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/html/">html</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安全/">安全</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-loadingChunkFailed" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -97,7 +156,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/19/loadingChunkFailed/" data-id="ckb94ioze000cgofv6h5ny9kz"
+      <a data-url="http://yoursite.com/2019/08/19/loadingChunkFailed/" data-id="ckbgaup7l000kmgfvlo76e9x8"
          class="article-share-link">Share</a>
       
     </footer>
@@ -153,7 +212,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/13/learn-session/" data-id="ckb94ioz9000bgofvh9rstd8m"
+      <a data-url="http://yoursite.com/2019/08/13/learn-session/" data-id="ckbgaup7j000jmgfvifaqovb4"
          class="article-share-link">Share</a>
       
     </footer>
@@ -213,7 +272,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/11/router-control-bug/" data-id="ckb94ip0f000mgofvkih9dpxb"
+      <a data-url="http://yoursite.com/2019/08/11/router-control-bug/" data-id="ckbgaup8a0010mgfvvqjyauh4"
          class="article-share-link">Share</a>
       
     </footer>
@@ -272,7 +331,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/06/one-code-include-two-project/" data-id="ckb94iozy000hgofvxovm6unt"
+      <a data-url="http://yoursite.com/2019/08/06/one-code-include-two-project/" data-id="ckbgaup7x000tmgfvl1z0zg8s"
          class="article-share-link">Share</a>
       
     </footer>
@@ -331,7 +390,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/04/login-problem/" data-id="ckb94iozr000fgofvc1l2mjos"
+      <a data-url="http://yoursite.com/2019/08/04/login-problem/" data-id="ckbgaup7v000rmgfv3jn8t6pe"
          class="article-share-link">Share</a>
       
     </footer>
@@ -388,7 +447,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/03/quarter-select-code-opt/" data-id="ckb94ip0e000lgofvl3wqexej"
+      <a data-url="http://yoursite.com/2019/08/03/quarter-select-code-opt/" data-id="ckbgaup85000xmgfv5js3co20"
          class="article-share-link">Share</a>
       
     </footer>
@@ -455,7 +514,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/08/02/hello-world/" data-id="ckb94ioz20009gofvlv87gyjf"
+      <a data-url="http://yoursite.com/2019/08/02/hello-world/" data-id="ckbgaup79000fmgfv85w3fopk"
          class="article-share-link">Share</a>
       
     </footer>
@@ -513,7 +572,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/07/31/new-hexo/" data-id="ckb94ip00000igofvdp5a3sl6"
+      <a data-url="http://yoursite.com/2019/07/31/new-hexo/" data-id="ckbgaup7s000pmgfvpx27h8cb"
          class="article-share-link">Share</a>
       
     </footer>
@@ -548,8 +607,6 @@
   
     <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
   
-    <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
-  
 </ul>
     </div>
     <ul class="list-inline">
@@ -581,6 +638,10 @@
       </li>
     
       <li class="nav-item">
+        <a class="nav-item-link" href="/tags">Tags</a>
+      </li>
+    
+      <li class="nav-item">
         <a class="nav-item-link" href="/gallery">Gallery</a>
       </li>
     
@@ -589,7 +650,7 @@
       </li>
     
     <li class="nav-item">
-      <a class="nav-item-link nav-item-search" title="Search">
+      <a class="nav-item-link nav-item-search" title="搜索">
         <i class="fe fe-search"></i>
         Search
       </a>
