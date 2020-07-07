@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>利用visibilitychange对项目进行优化</title>
+      <link href="/2020/07/07/visibilitychange/"/>
+      <url>/2020/07/07/visibilitychange/</url>
+      
+        <content type="html"><![CDATA[<p>&emsp;&emsp;我目前做的项目中由于后台架构设计的不合理（后台架构本来应该设计成类似node的事件通知类型的，但是由于项目一开始选型的问题，导致后面很多操作都得依赖前端轮询来实现。） 同时我们的项目有一些跳转操作是直接打开一个新的标签页（方便使用人员比对、查看数据），所以会导致一个浏览器里面打开了好些相同的标签页，然后标签页又有许多没必要进行的轮询。当遇到visibilitychange事件时，我知道，就是它了。</p><p>&emsp;&emsp;优化价值：减少CPU占用，减少不必要请求对带宽的占用，同时能比较大地减少服务器的压力。</p><p>&emsp;&emsp;这次我总共尝试了三种不同的方法，下面对这三种进行描述，最后再进行对比总结。</p><p>&emsp;&emsp; 第一种是使用自定义生命周期的方法，在main中创建vue之前，往Vue.config.optionMergeStrategie中加入pageVisible跟pageHidden这两个生命周期，然后在创建Vue之后，在window上绑定一个visibilitychange的监听事件，每次事件被触发之后就利用递归去执行每个组件中主次的这两个生命周期。在组件中的具体使用方法是：在pageVisible中初始化轮询方法，在pageHidden中对定时器进行销毁。</p><p>&emsp;&emsp; 在每个使用轮询的组件中加入这两个生命周期其实是挺繁琐的事情，所以我试图寻找一种全局控制的方法，所以就有了第二种尝试。这一次我试图去对window中存到的timer的信息进行删除跟初始化，进行了一波骚操作之后我发现这种方法是不可行的——这种对window下的timer进行删除跟重新创建定时器的方法，可能会导致组件中原来保存的timer其实是过期的，这时候组件在beforeDestroy中清除的定时器是已经被清除的了，而真正的定时器还是存在的。</p><p>&emsp;&emsp; 第三种方法，也是我最后使用的方法。分析了一波项目，发现里面用的定时器都是有经过封装的intervalTask的实例，我只需要遍历组件，然后找出每个组件中intervalTask实例化的属性，对属性轮询的状态进行判断之后再调用其中的intervalTask的start、stop的方法，基本就能解决大部分情景的问题了。</p><p>&emsp;&emsp; 由于第二种方法是失败的，所以主要对比第一种跟第三种方法，第一种方法的话比较繁琐，所以编码的人可能经常忘记这种处理，但是这种方法对性能的影响会比较小。而第三种方法虽然集中统一地处理了，但是在递归对组件的属性进行遍历的时候，应该还是比较耗费性能的。</p><p>最后附上第三种方法具体实现的代码</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">import IntervalTask from <span class="string">'src/util/interval_task'</span>;</span><br><span class="line"></span><br><span class="line">const PAGE_VISIBLE = <span class="string">'pageVisible'</span>,</span><br><span class="line">      PAGE_HIDDEN = <span class="string">'pageHidden'</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">let</span> goThroughAllAttr = (vm, callback) =&gt; &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">let</span> key <span class="keyword">in</span> vm) &#123;</span><br><span class="line">        <span class="keyword">if</span> (vm.hasOwnProperty(key)) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (Object.prototype.toString.call(vm[key]) === <span class="string">'[object Object]'</span>) &#123;</span><br><span class="line">                <span class="built_in">let</span> attr = Object.getPrototypeOf(vm[key]);</span><br><span class="line">                <span class="keyword">if</span> (attr &amp;&amp; attr.constructor === IntervalTask) &#123;</span><br><span class="line">                    callback &amp;&amp; callback(vm[key], vm[key].state);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;; </span><br><span class="line"></span><br><span class="line">// 通知所有组件页面状态发生了变化</span><br><span class="line"><span class="built_in">let</span> notifyVisibilityChange = (pageState, vm) =&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pageState === PAGE_VISIBLE) &#123;</span><br><span class="line">        goThroughAllAttr(vm, (intervalTask, state) =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (state === IntervalTask.STATE.STOPPED_BY_ROOT) &#123;</span><br><span class="line">                intervalTask.startByRoot();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;); </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (pageState === PAGE_HIDDEN) &#123;</span><br><span class="line">        goThroughAllAttr(vm, (intervalTask, state) =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (state === IntervalTask.RUNNING || state === IntervalTask.STATE.WAITING) &#123;</span><br><span class="line">                intervalTask.stopByRoot();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;); </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 遍历所有的子组件，然后依次递归执行</span><br><span class="line">    <span class="keyword">if</span> (vm.<span class="variable">$children</span> &amp;&amp; vm.<span class="variable">$children</span>.length) &#123;</span><br><span class="line">        vm.<span class="variable">$children</span>.forEach(child =&gt; &#123;</span><br><span class="line">            notifyVisibilityChange(pageState, child);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 将事件变化绑定到根节点上面</span><br><span class="line"> * @param &#123;*&#125; rootVm</span><br><span class="line"> */</span><br><span class="line"><span class="built_in">export</span> <span class="keyword">function</span> bindVisibilityHook (rootVm) &#123;</span><br><span class="line">    window.addEventListener(<span class="string">'visibilitychange'</span>, () =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (document.visibilityState === <span class="string">'hidden'</span>) &#123;</span><br><span class="line"></span><br><span class="line">            // 通知所有组件生命周期发生变化了</span><br><span class="line">            notifyVisibilityChange(PAGE_HIDDEN, rootVm);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (document.visibilityState === <span class="string">'visible'</span>) &#123;</span><br><span class="line">            notifyVisibilityChange(PAGE_VISIBLE, rootVm);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 项目优化 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>找回删除分支中的commit</title>
       <link href="/2020/06/15/find-delete-code/"/>
       <url>/2020/06/15/find-delete-code/</url>
@@ -17,6 +36,19 @@
             <tag> git </tag>
             
         </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>IE下get请求报错排查</title>
+      <link href="/2020/06/04/IE-queryString/"/>
+      <url>/2020/06/04/IE-queryString/</url>
+      
+        <content type="html"><![CDATA[<p> &emsp;&emsp;报错原因：在ie下pathInfo的编码方式为UTF-8，而queryString的编码方式是GB2312编码（谷歌、火狐都是UTF-8），所以后台解析不了queryString中的内容，也就报错了。<br> &emsp;&emsp;解决方法：使用encodeURI对url进行包裹，或者是将get请求改成post。</p>]]></content>
+      
+      
       
     </entry>
     
@@ -38,19 +70,6 @@
             <tag> 火狐 </tag>
             
         </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>IE下get请求报错排查</title>
-      <link href="/2020/06/04/IE-queryString/"/>
-      <url>/2020/06/04/IE-queryString/</url>
-      
-        <content type="html"><![CDATA[<p> &emsp;&emsp;报错原因：在ie下pathInfo的编码方式为UTF-8，而queryString的编码方式是GB2312编码（谷歌、火狐都是UTF-8），所以后台解析不了queryString中的内容，也就报错了。<br> &emsp;&emsp;解决方法：使用encodeURI对url进行包裹，或者是将get请求改成post。</p>]]></content>
-      
-      
       
     </entry>
     

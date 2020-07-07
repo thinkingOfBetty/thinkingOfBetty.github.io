@@ -57,6 +57,70 @@
 
     
       
+        <article id="post-visibilitychange" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/07/07/visibilitychange/">利用visibilitychange对项目进行优化</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/07/07/visibilitychange/" class="article-date">
+  <time datetime="2020-07-06T16:00:00.000Z" itemprop="datePublished">2020-07-07</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>&emsp;&emsp;我目前做的项目中由于后台架构设计的不合理（后台架构本来应该设计成类似node的事件通知类型的，但是由于项目一开始选型的问题，导致后面很多操作都得依赖前端轮询来实现。） 同时我们的项目有一些跳转操作是直接打开一个新的标签页（方便使用人员比对、查看数据），所以会导致一个浏览器里面打开了好些相同的标签页，然后标签页又有许多没必要进行的轮询。当遇到visibilitychange事件时，我知道，就是它了。</p>
+<p>&emsp;&emsp;优化价值：减少CPU占用，减少不必要请求对带宽的占用，同时能比较大地减少服务器的压力。</p>
+<p>&emsp;&emsp;这次我总共尝试了三种不同的方法，下面对这三种进行描述，最后再进行对比总结。</p>
+<p>&emsp;&emsp; 第一种是使用自定义生命周期的方法，在main中创建vue之前，往Vue.config.optionMergeStrategie中加入pageVisible跟pageHidden这两个生命周期，然后在创建Vue之后，在window上绑定一个visibilitychange的监听事件，每次事件被触发之后就利用递归去执行每个组件中主次的这两个生命周期。在组件中的具体使用方法是：在pageVisible中初始化轮询方法，在pageHidden中对定时器进行销毁。</p>
+<p>&emsp;&emsp; 在每个使用轮询的组件中加入这两个生命周期其实是挺繁琐的事情，所以我试图寻找一种全局控制的方法，所以就有了第二种尝试。这一次我试图去对window中存到的timer的信息进行删除跟初始化，进行了一波骚操作之后我发现这种方法是不可行的——这种对window下的timer进行删除跟重新创建定时器的方法，可能会导致组件中原来保存的timer其实是过期的，这时候组件在beforeDestroy中清除的定时器是已经被清除的了，而真正的定时器还是存在的。</p>
+<p>&emsp;&emsp; 第三种方法，也是我最后使用的方法。分析了一波项目，发现里面用的定时器都是有经过封装的intervalTask的实例，我只需要遍历组件，然后找出每个组件中intervalTask实例化的属性，对属性轮询的状态进行判断之后再调用其中的intervalTask的start、stop的方法，基本就能解决大部分情景的问题了。</p>
+<p>&emsp;&emsp; 由于第二种方法是失败的，所以主要对比第一种跟第三种方法，第一种方法的话比较繁琐，所以编码的人可能经常忘记这种处理，但是这种方法对性能的影响会比较小。而第三种方法虽然集中统一地处理了，但是在递归对组件的属性进行遍历的时候，应该还是比较耗费性能的。</p>
+<p>最后附上第三种方法具体实现的代码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">import IntervalTask from <span class="string">'src/util/interval_task'</span>;</span><br><span class="line"></span><br><span class="line">const PAGE_VISIBLE = <span class="string">'pageVisible'</span>,</span><br><span class="line">      PAGE_HIDDEN = <span class="string">'pageHidden'</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">let</span> goThroughAllAttr = (vm, callback) =&gt; &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">let</span> key <span class="keyword">in</span> vm) &#123;</span><br><span class="line">        <span class="keyword">if</span> (vm.hasOwnProperty(key)) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (Object.prototype.toString.call(vm[key]) === <span class="string">'[object Object]'</span>) &#123;</span><br><span class="line">                <span class="built_in">let</span> attr = Object.getPrototypeOf(vm[key]);</span><br><span class="line">                <span class="keyword">if</span> (attr &amp;&amp; attr.constructor === IntervalTask) &#123;</span><br><span class="line">                    callback &amp;&amp; callback(vm[key], vm[key].state);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;; </span><br><span class="line"></span><br><span class="line">// 通知所有组件页面状态发生了变化</span><br><span class="line"><span class="built_in">let</span> notifyVisibilityChange = (pageState, vm) =&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pageState === PAGE_VISIBLE) &#123;</span><br><span class="line">        goThroughAllAttr(vm, (intervalTask, state) =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (state === IntervalTask.STATE.STOPPED_BY_ROOT) &#123;</span><br><span class="line">                intervalTask.startByRoot();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;); </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (pageState === PAGE_HIDDEN) &#123;</span><br><span class="line">        goThroughAllAttr(vm, (intervalTask, state) =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (state === IntervalTask.RUNNING || state === IntervalTask.STATE.WAITING) &#123;</span><br><span class="line">                intervalTask.stopByRoot();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;); </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 遍历所有的子组件，然后依次递归执行</span><br><span class="line">    <span class="keyword">if</span> (vm.<span class="variable">$children</span> &amp;&amp; vm.<span class="variable">$children</span>.length) &#123;</span><br><span class="line">        vm.<span class="variable">$children</span>.forEach(child =&gt; &#123;</span><br><span class="line">            notifyVisibilityChange(pageState, child);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 将事件变化绑定到根节点上面</span><br><span class="line"> * @param &#123;*&#125; rootVm</span><br><span class="line"> */</span><br><span class="line"><span class="built_in">export</span> <span class="keyword">function</span> bindVisibilityHook (rootVm) &#123;</span><br><span class="line">    window.addEventListener(<span class="string">'visibilitychange'</span>, () =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (document.visibilityState === <span class="string">'hidden'</span>) &#123;</span><br><span class="line"></span><br><span class="line">            // 通知所有组件生命周期发生变化了</span><br><span class="line">            notifyVisibilityChange(PAGE_HIDDEN, rootVm);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (document.visibilityState === <span class="string">'visible'</span>) &#123;</span><br><span class="line">            notifyVisibilityChange(PAGE_VISIBLE, rootVm);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/07/visibilitychange/" data-id="ckcboa1pa00006ofvpw43pzis"
+         class="article-share-link">Share</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/项目优化/">项目优化</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-find-delete-code" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -120,6 +184,61 @@
 
 
       
+        <article id="post-IE-queryString" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2020/06/04/IE-queryString/">IE下get请求报错排查</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2020/06/04/IE-queryString/" class="article-date">
+  <time datetime="2020-06-03T16:00:00.000Z" itemprop="datePublished">2020-06-04</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p> &emsp;&emsp;报错原因：在ie下pathInfo的编码方式为UTF-8，而queryString的编码方式是GB2312编码（谷歌、火狐都是UTF-8），所以后台解析不了queryString中的内容，也就报错了。<br> &emsp;&emsp;解决方法：使用encodeURI对url进行包裹，或者是将get请求改成post。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/06/04/IE-queryString/" data-id="ckbgaup680006mgfv04xwsv4c"
+         class="article-share-link">Share</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-less-deep" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -164,61 +283,6 @@
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/less/">less</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/火狐/">火狐</a></li></ul>
 
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
-        <article id="post-IE-queryString" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2020/06/04/IE-queryString/">IE下get请求报错排查</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2020/06/04/IE-queryString/" class="article-date">
-  <time datetime="2020-06-03T16:00:00.000Z" itemprop="datePublished">2020-06-04</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p> &emsp;&emsp;报错原因：在ie下pathInfo的编码方式为UTF-8，而queryString的编码方式是GB2312编码（谷歌、火狐都是UTF-8），所以后台解析不了queryString中的内容，也就报错了。<br> &emsp;&emsp;解决方法：使用encodeURI对url进行包裹，或者是将get请求改成post。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/06/04/IE-queryString/" data-id="ckbgaup680006mgfv04xwsv4c"
-         class="article-share-link">Share</a>
-      
     </footer>
 
   </div>
@@ -606,68 +670,6 @@
 
 
       
-        <article id="post-canceled" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/12/13/canceled/">非相同请求被canceled的bug排查</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/12/13/canceled/" class="article-date">
-  <time datetime="2019-12-12T16:00:00.000Z" itemprop="datePublished">2019-12-13</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p><strong>BUG描述</strong><br>&emsp;&emsp;在工单的详情页有一个跳转到设备管理的按钮（到设备页后网页会发起两个请求——一个是detail，一个是dev），一开始这个detail会报错———无效的输入，这个时候dev接口还是可以正常请求的。结果后台把detail接口报错修复之后，发现dev接口一直是被canceled的状态。一开始还以为是后台的问题，因为我们封装的请求里面是网页发起两个相同的请求时，如果前一个请求没有返回时，网页继续发起相同的请求，代码里默认是就会把前一个请求abort。直到后面后台一直说他后台没有报错，这时我调试控制台，将网速降到slow 3G之后，发现dev请求不被canceled，这时候才把问题定位在前端。其实把请求给canceled的操作只能是前端操作的，后端设置接口时只能设置成超时。我不应该一开始就把后台拉下来定位问题的。。。</p>
-<p> <strong>排查问题</strong><br> &emsp;&emsp;定位到前端问题后，我发现sf-table里面有一个v-if，我以为是v-if为false时把sf-table给隐藏了，导致发起的请求也被终止了，但是后面一想，模板的渲染跟请求没有啥关系，要排查问题，还是得从util/request中开始排查。</p>
-<p><strong>定位问题</strong><br> &emsp;&emsp;开始打断点，发现只要接口被canceled的时候，就会进入abortAll这个函数，于是全局搜索abortAll，发现Router.beforeEach中会去调用这个函数，这时才定位到原来dev被canceled是因为detail请求之后，路由发生了改变，此时查看detail的成功回调中，果然有操作路由的动作———router.push({query:{role:data.phase}});</p>
-<p><strong>问题剖析</strong><br> &emsp;&emsp;因为这个detail的请求是放在vuex的action里面去做的，每次只要客户管理的模块被加载，这个action就会在mounted里被触发，而之前要解决的bug是在客户管理的客户信息下面才有这个问题，现在如果把这个改变路由的代码放在客户信息下去做，就不会有这个问题了，因为客户信息本来也只有调用detail这个接口。所以最终的解决方案就是把这个router.push({query:{role:data.phase}})放在客户信息的路由下去做（监听路由，路由中包含info时，才在调用action中把操作路由的回调给传入，在detail请求成功的回调中执行）。</p>
-<p> <strong>问题回顾</strong><br>  &emsp;&emsp;此时查看代码提交记录，发现该代码是要解决一个td而添加的，这个td是用户打开了两个页面，在一个页面中去修改某个客户的服务项，但是在另外一个页面却没有更新客户管理模块中的客户信息的服务项，原因就是没有去加载detail的这个接口，于是mc之前改td的时候就是用watch，在路由中包含info的时候，就会去调用detial的接口，然后去更新路由的查询中的role。这样之后查询会把最新的role给带过去，写到这里我才发现，从表格进去的时候，用户可能有（3、5）这两种角色，在另外的网页中，用户可以把对应的（3、5）升级成（6、7），此时后台应该直接把前端请求的3映射成6，把请求的5映射成7，而不应该都依赖于前端去修改请求参数。要不然前端来做这种操作一般都会引发其他的问题。因为同一个页面，可能会有多个入口，没有办法保证每个入口都会给这个页面传一个role值，比如一开始的detail接口中报错———无效的参数，就是因为在详情中跳转过来没有带一个role值过来，请求的时候detail就直接报错了，这个的解决方法是后端判断role这个参数没有传值时，做了兼容的处理，同理我觉得客户信息页没有刷新也是同样的问题。<br> &emsp;&emsp;因此，涉及到这种过于依赖前端查询参数的接口的，要尽可能让后端做映射、兼容处理。</p>
-<p>&emsp;&emsp;<strong>注意</strong> 之后遇到类似的交互场景、依靠前端这种添加路由的形式去做的要额外小心，因为后续一旦修改了路由参数的，可能又会发生类似的问题，特别是在整个大模块（下面可能会对应多个路由）mounted的时候就执行的场景。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/12/13/canceled/" data-id="ckbgaup6q000amgfv6kipdukg"
-         class="article-share-link">Share</a>
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bug记录/">bug记录</a></li></ul>
-
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
   </article>
   
 
@@ -686,6 +688,8 @@
       <ul class="list-inline">
   
     <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+    <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
   
 </ul>
     </div>

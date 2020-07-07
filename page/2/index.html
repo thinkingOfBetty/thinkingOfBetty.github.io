@@ -57,6 +57,68 @@
 
     
       
+        <article id="post-canceled" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/12/13/canceled/">非相同请求被canceled的bug排查</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/12/13/canceled/" class="article-date">
+  <time datetime="2019-12-12T16:00:00.000Z" itemprop="datePublished">2019-12-13</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p><strong>BUG描述</strong><br>&emsp;&emsp;在工单的详情页有一个跳转到设备管理的按钮（到设备页后网页会发起两个请求——一个是detail，一个是dev），一开始这个detail会报错———无效的输入，这个时候dev接口还是可以正常请求的。结果后台把detail接口报错修复之后，发现dev接口一直是被canceled的状态。一开始还以为是后台的问题，因为我们封装的请求里面是网页发起两个相同的请求时，如果前一个请求没有返回时，网页继续发起相同的请求，代码里默认是就会把前一个请求abort。直到后面后台一直说他后台没有报错，这时我调试控制台，将网速降到slow 3G之后，发现dev请求不被canceled，这时候才把问题定位在前端。其实把请求给canceled的操作只能是前端操作的，后端设置接口时只能设置成超时。我不应该一开始就把后台拉下来定位问题的。。。</p>
+<p> <strong>排查问题</strong><br> &emsp;&emsp;定位到前端问题后，我发现sf-table里面有一个v-if，我以为是v-if为false时把sf-table给隐藏了，导致发起的请求也被终止了，但是后面一想，模板的渲染跟请求没有啥关系，要排查问题，还是得从util/request中开始排查。</p>
+<p><strong>定位问题</strong><br> &emsp;&emsp;开始打断点，发现只要接口被canceled的时候，就会进入abortAll这个函数，于是全局搜索abortAll，发现Router.beforeEach中会去调用这个函数，这时才定位到原来dev被canceled是因为detail请求之后，路由发生了改变，此时查看detail的成功回调中，果然有操作路由的动作———router.push({query:{role:data.phase}});</p>
+<p><strong>问题剖析</strong><br> &emsp;&emsp;因为这个detail的请求是放在vuex的action里面去做的，每次只要客户管理的模块被加载，这个action就会在mounted里被触发，而之前要解决的bug是在客户管理的客户信息下面才有这个问题，现在如果把这个改变路由的代码放在客户信息下去做，就不会有这个问题了，因为客户信息本来也只有调用detail这个接口。所以最终的解决方案就是把这个router.push({query:{role:data.phase}})放在客户信息的路由下去做（监听路由，路由中包含info时，才在调用action中把操作路由的回调给传入，在detail请求成功的回调中执行）。</p>
+<p> <strong>问题回顾</strong><br>  &emsp;&emsp;此时查看代码提交记录，发现该代码是要解决一个td而添加的，这个td是用户打开了两个页面，在一个页面中去修改某个客户的服务项，但是在另外一个页面却没有更新客户管理模块中的客户信息的服务项，原因就是没有去加载detail的这个接口，于是mc之前改td的时候就是用watch，在路由中包含info的时候，就会去调用detial的接口，然后去更新路由的查询中的role。这样之后查询会把最新的role给带过去，写到这里我才发现，从表格进去的时候，用户可能有（3、5）这两种角色，在另外的网页中，用户可以把对应的（3、5）升级成（6、7），此时后台应该直接把前端请求的3映射成6，把请求的5映射成7，而不应该都依赖于前端去修改请求参数。要不然前端来做这种操作一般都会引发其他的问题。因为同一个页面，可能会有多个入口，没有办法保证每个入口都会给这个页面传一个role值，比如一开始的detail接口中报错———无效的参数，就是因为在详情中跳转过来没有带一个role值过来，请求的时候detail就直接报错了，这个的解决方法是后端判断role这个参数没有传值时，做了兼容的处理，同理我觉得客户信息页没有刷新也是同样的问题。<br> &emsp;&emsp;因此，涉及到这种过于依赖前端查询参数的接口的，要尽可能让后端做映射、兼容处理。</p>
+<p>&emsp;&emsp;<strong>注意</strong> 之后遇到类似的交互场景、依靠前端这种添加路由的形式去做的要额外小心，因为后续一旦修改了路由参数的，可能又会发生类似的问题，特别是在整个大模块（下面可能会对应多个路由）mounted的时候就执行的场景。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/12/13/canceled/" data-id="ckbgaup6q000amgfv6kipdukg"
+         class="article-share-link">Share</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bug记录/">bug记录</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
         <article id="post-reflog" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -590,63 +652,6 @@
 
 
       
-        <article id="post-$set" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h2 itemprop="name">
-      <a class="article-title" href="/2019/09/04/$set/">$set采坑记</a>
-    </h2>
-  
-  
-
-
-
-
-      </header>
-    
-
-    
-      <div class="article-meta">
-        <a href="/2019/09/04/$set/" class="article-date">
-  <time datetime="2019-09-03T16:00:00.000Z" itemprop="datePublished">2019-09-04</time>
-</a>
-        
-      </div>
-    
-
-    <div class="article-entry" itemprop="articleBody">
-      
-
-      
-
-      
-        <p> &emsp;&emsp;前几天做后台管理系统时，里面有一个涉及到对申请者的信息修改，对原来已经有的申请者，只能进行积分的修改或者是删除申请者，同时对新增申请者可以选择姓名、调整积分。由于新增申请者跟原有申请者的操作跟展示效果都不一样，所以在展示申请者的时候，我用tag这个字段来进行区分，最后把这个tag传给后台进行数据处理。新增的obj在推入时就会一并添加一个tag属性，且其值为”add”，删除的是直接使用index对数组中某一项新增tag属性，且其值为delete。展示层对于tag值为delete的则不展示，由于tag这个属性是新增的，所以需要使用$set，否则视图层不会响应。在我添加$set之后，我发现了另外一个诡异的问题，就是在点击删除之后，后面新增的obj都不再展示。此时我打印数据，发现数据是正常的，就是被删除的obj的tag是delete，而之前新增的tag还是add，那为什么会不展示了呢？？这个问题我到现在也没搞懂，但是这个问题只有两种可能，一种是我的展示逻辑写的有问题，另一种就是vue有bug。等我去理解$set的源码或许会得到解答。<br> &emsp;&emsp;最后同事小赵提出了一种解决方案，在获取到申请者数据时，用$set循环为每一个obj添加tag属性，且该值置为空。然后后台有变动的时候，在直接修改tag属性。果然用这种方法之后，视图就正常显示了。但是我还是没搞懂这样子能解决问题的理由。。。等我找到答案时再回来更新，未完待续</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/09/04/$set/" data-id="ckbgaup5o0002mgfvgxyaau2r"
-         class="article-share-link">Share</a>
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vue/">Vue</a></li></ul>
-
-    </footer>
-
-  </div>
-
-  
-
-  
-
-</article>
-
-
-
-      
   </article>
   
 
@@ -665,6 +670,8 @@
       <ul class="list-inline">
   
     <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+    <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
   
 </ul>
     </div>
